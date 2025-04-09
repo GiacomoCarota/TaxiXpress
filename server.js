@@ -5,7 +5,6 @@ const path = require("path");
 const crypto = require("crypto");
 const postgres = require('postgres');
 
-
 require("dotenv").config();
 
 const app = express();
