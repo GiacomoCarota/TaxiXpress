@@ -24,3 +24,7 @@ app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/img", express.static(path.join(__dirname, "img")));
 app.use(express.json());
 
+// Avvia il server
+app.listen(port, () => {
+    console.log(`Server avviato su http://localhost:${port}`);
+});
