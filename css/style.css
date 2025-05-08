@@ -1,133 +1,169 @@
-body {
+/* === RESET E GENERALI === */
+* {
+    box-sizing: border-box;
     margin: 0;
-    font-family: sans-serif;
+    padding: 0;
   }
   
-  .navbar {
-    background: #aaa;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fffef8;
+    color: #151513;
+    line-height: 1.6;
   }
   
-  .navbar nav a {
+  a {
     text-decoration: none;
-    background: black;
-    color: white;
-    padding: 5px 15px;
-    border-radius: 25px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #151513;
+}
+
+  /* === NAVBAR === */
+.navbar {
+    background-color: #004F39;
+    padding: 1rem 2rem;
   }
   
-  .logo-btn {
-    background: black;
-    color: white;
-    padding: 5px 15px;
+  .navbar-brand {
+    color: #EAE9E7 !important;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .navbar-nav .nav-link {
+    color: #EAE9E7 !important;
+    font-weight: 500;
+    margin-left: 1rem;
+  }
+  
+  .navbar-nav .nav-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* === HERO SECTION (Testo + Mappa) === */
+  section.container {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+  
+  h1.fw-bold {
+    font-size: 2.2rem;
+    color: #151513;
+  }
+  
+  .lead {
+    font-size: 1.1rem;
+  }
+  
+  .btn-dark {
+    background-color: #151513;
+    color: #FFFACA;
     border: none;
-    cursor: pointer;
+    margin-top: 1rem;
   }
   
-  .hero {
-    display: flex;
-    justify-content: space-between;
-    padding: 40px;
+  .btn-dark:hover {
+    background-color: #004F39;
   }
   
-  .hero-text {
-    flex: 1;
-    padding: 20px;
+  .link-dark {
+    color: #004F39;
+    font-size: 0.95rem;
   }
   
-  .hero-map {
-    flex: 1;
-    background: #888;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 300px;
+  /* === MAPPA INTERATTIVA === */
+  .map-area {
+    background-color: #EAE9E7;
+    height: 400px;
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid #004F39;
+    margin-top: 1rem;
   }
   
-  .ads {
-    display: flex;
-    justify-content: space-around;
-    padding: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .ad-item {
-    width: 45%;
-    margin: 10px;
-  }
-  
-  .image {
-    background: black;
-    color: white;
-    height: 150px;
+  /* === PUBBLICITÀ SEZIONE === */
+  .image-box {
+    background-color: #EAE9E7;
+    color: #151513;
+    min-height: 200px;
+    border: 2px solid #004F39;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
   }
   
+  .ad-text {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-top: 1rem;
+    color: #151513;
+  }
+  
+  /* === FOOTER === */
   footer {
-    background: #999;
-    padding: 20px;
+    background-color: #151513;
+    color: #EAE9E7;
+    padding: 2rem 2rem;
+    margin-top: 3rem;
+  }
+  
+  footer h6 {
+    color: #FFFACA;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  footer p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  footer small {
+    color: #EAE9E7;
+  }
+  
+  footer button {
+    background-color: transparent;
+    color: #FFFACA;
+    border: 1px solid #FFFACA;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+  }
+  
+  footer button:hover {
+    background-color: #004F39;
     color: white;
   }
   
-  .footer-content {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .navbar-nav {
+      flex-direction: column;
+      text-align: center;
+    }
   
-  .footer-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    .map-area {
+      height: 300px;
+    }
   
-  /* Login Page */
-  .login-container {
-    display: flex;
-    padding: 20px;
-  }
+    .image-box {
+      margin-bottom: 1.5rem;
+    }
   
-  .login-image {
-    flex: 1;
-    background: #555;
-    height: 100vh;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    footer .row {
+      flex-direction: column;
+      text-align: center;
+    }
   
-  .login-form {
-    flex: 1;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .login-form input {
-    padding: 10px;
-    font-size: 16px;
-  }
-  
-  .google-btn, .submit-btn {
-    background: #777;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  .forgot {
-    font-size: 0.8rem;
-    color: #333;
-    text-align: right;
-    text-decoration: none;
+    footer .d-flex {
+      flex-direction: column;
+      gap: 1rem;
+    }
   }
   

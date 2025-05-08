@@ -1,36 +1,48 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>TaxiXpress - Login</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>TaxiXpress - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <header class="navbar">
-    <button class="logo-btn">Logo</button>
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">Prenota</a>
-      <a href="#">Info</a>
-      <a href="#">About Us</a>
-      <a href="#">Login</a>
-      <a href="#">Registrati</a>
-    </nav>
-  </header>
 
-  <div class="login-container">
-    <div class="login-image">Image</div>
-    <div class="login-form">
-      <div class="logo">Logo</div>
-      <button class="google-btn">Google</button>
-      <hr><p>Or Sign in With Email</p><hr>
-      <input type="email" placeholder="Email">
-      <input type="password" placeholder="Password">
-      <label><input type="checkbox"> Ricordami</label>
-      <a href="#" class="forgot">Password Dimenticata?</a>
-      <button class="submit-btn">Accedi</button>
+<nav class="navbar navbar-expand-lg px-4">
+    <a class="navbar-brand text-white" href="#">Logo</a>
+    <div class="collapse navbar-collapse">
+    <ul class="navbar-nav ms-auto gap-2">
+        <li class="nav-item"><a class="nav-link" href="/html/home.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Prenota</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Info</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+        <li class="nav-item"><a class="nav-link" href="/html/login.html">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Registrati</a></li>
+    </ul>
     </div>
-  </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+    <div class="col-md-6 left-image d-flex justify-content-center align-items-center">
+        <h1>Image</h1>
+    </div>
+    <div class="col-md-6 d-flex justify-content-center align-items-center">
+        <div class="login-box w-75">
+        <h2 class="mb-4 text-center">Logo</h2>
+        <button class="btn btn-secondary w-100 mb-3">Google</button>
+        <div class="text-center">— Or Sign in With Email —</div>
+        <input type="email" class="form-control my-2" placeholder="Email" id="loginEmail">
+        <input type="password" class="form-control my-2" placeholder="Password" id="loginPassword">
+        <div class="d-flex justify-content-between align-items-center">
+            <label><input type="checkbox"> Ricordami</label>
+            <a href="#" class="forgot">Password Dimenticata?</a>
+        </div>
+        <button class="btn btn-primary w-100 mt-3">Accedi</button>
+        </div>
+    </div>
+    </div>
+</div>
+
 </body>
 </html>
