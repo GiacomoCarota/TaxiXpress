@@ -1,0 +1,133 @@
+body {
+    margin: 0;
+    font-family: sans-serif;
+  }
+  
+  .navbar {
+    background: #aaa;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .navbar nav a {
+    text-decoration: none;
+    background: black;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 25px;
+  }
+  
+  .logo-btn {
+    background: black;
+    color: white;
+    padding: 5px 15px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .hero {
+    display: flex;
+    justify-content: space-between;
+    padding: 40px;
+  }
+  
+  .hero-text {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .hero-map {
+    flex: 1;
+    background: #888;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+  }
+  
+  .ads {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .ad-item {
+    width: 45%;
+    margin: 10px;
+  }
+  
+  .image {
+    background: black;
+    color: white;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  footer {
+    background: #999;
+    padding: 20px;
+    color: white;
+  }
+  
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .footer-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Login Page */
+  .login-container {
+    display: flex;
+    padding: 20px;
+  }
+  
+  .login-image {
+    flex: 1;
+    background: #555;
+    height: 100vh;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login-form {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .login-form input {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .google-btn, .submit-btn {
+    background: #777;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .forgot {
+    font-size: 0.8rem;
+    color: #333;
+    text-align: right;
+    text-decoration: none;
+  }
+  

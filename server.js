@@ -14,7 +14,6 @@ const port = 3000;
 const connectionString = process.env.DATABASE_URL
 const sql = postgres(connectionString)
 
-
 // Configura CORS
 app.use(cors());
 
