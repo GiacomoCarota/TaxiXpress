@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Prenotazione Mezzo</title>
+  <link rel="stylesheet" href="/css/style.css"> <!-- opzionale -->
+</head>
+<body>
+  <h1>Prenota un mezzo</h1>
+
+  <form id="prenotazioneForm">
+    <label for="puntoPartenza">Punto di Partenza:</label>
+    <select id="puntoPartenza" required></select>
+
+    <label for="puntoArrivo">Punto di Arrivo:</label>
+    <select id="puntoArrivo" required></select>
+
+    <label for="orario">Orario di Partenza:</label>
+    <input type="datetime-local" id="orario" required>
+
+    <button type="submit">Prenota</button>
+  </form>
+
+  <script src="/js/prenotazione.js"></script>
+</body>
+</html>

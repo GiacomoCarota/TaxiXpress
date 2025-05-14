@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const path = require("path");
 const crypto = require("crypto");
 const postgres = require('postgres');
-const bcrypt = require("bcrypt");
+
 
 require("dotenv").config();
 
@@ -102,3 +102,64 @@ try {
 app.listen(port, () => {
     console.log(`Server avviato su http://localhost:${port}`);
 });
+
+
+app.get("/api/punti", async (req, res) => {
+    try {
+      const punti = await sql`SELECT * FROM punto`;
+      res.json(punti);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Errore nel caricamento dei punti" });
+    }
+  });
+
+app.post("/api/prenotazioni", async (req, res) => {
+const { OrarioDiPartenza, idPuP, idPuA, idU } = req.body;
+
+if (!OrarioDiPartenza || !idPuP || !idPuA || !idU) {
+    return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
+}
+
+try {
+    const idP = crypto.randomUUID(); // oppure usa il tuo metodo
+    await sql`
+    INSERT INTO prenotazione (idP, OrarioDiPartenza, idPuP, idPuA, idU)
+    VALUES (${idP}, ${OrarioDiPartenza}, ${idPuP}, ${idPuA}, ${idU})
+    `;
+    res.status(201).json({ message: "Prenotazione creata" });
+} catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore nella creazione della prenotazione" });
+}
+});
+app.get("/api/punti", async (req, res) => {
+    try {
+      const punti = await sql`SELECT * FROM punto`;
+      res.json(punti);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Errore nel caricamento dei punti" });
+    }
+  });
+
+  app.post("/api/prenotazioni", async (req, res) => {
+    const { OrarioDiPartenza, idPuP, idPuA, idU } = req.body;
+  
+    if (!OrarioDiPartenza || !idPuP || !idPuA || !idU) {
+      return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
+    }
+  
+    try {
+      const idP = crypto.randomUUID(); // oppure usa il tuo metodo
+      await sql`
+        INSERT INTO prenotazione (idP, OrarioDiPartenza, idPuP, idPuA, idU)
+        VALUES (${idP}, ${OrarioDiPartenza}, ${idPuP}, ${idPuA}, ${idU})
+      `;
+      res.status(201).json({ message: "Prenotazione creata" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Errore nella creazione della prenotazione" });
+    }
+  });
+  
