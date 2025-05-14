@@ -24,9 +24,9 @@ h1, h2, h3, h4, h5, h6 {
 .navbar {
     background-color: #004F39;
     padding: 1rem 2rem;
-  }
-  
-  .navbar-brand {
+}
+
+.navbar-brand {
     color: #EAE9E7 !important;
     font-weight: bold;
     font-size: 1.2rem;
