@@ -1,0 +1,169 @@
+/* === RESET E GENERALI === */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fffef8;
+    color: #151513;
+    line-height: 1.6;
+  }
+  
+  a {
+    text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #151513;
+}
+
+  /* === NAVBAR === */
+.navbar {
+    background-color: #004F39;
+    padding: 1rem 2rem;
+}
+
+.navbar-brand {
+    color: #EAE9E7 !important;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .navbar-nav .nav-link {
+    color: #EAE9E7 !important;
+    font-weight: 500;
+    margin-left: 1rem;
+  }
+  
+  .navbar-nav .nav-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* === HERO SECTION (Testo + Mappa) === */
+  section.container {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+  
+  h1.fw-bold {
+    font-size: 2.2rem;
+    color: #151513;
+  }
+  
+  .lead {
+    font-size: 1.1rem;
+  }
+  
+  .btn-dark {
+    background-color: #151513;
+    color: #FFFACA;
+    border: none;
+    margin-top: 1rem;
+  }
+  
+  .btn-dark:hover {
+    background-color: #004F39;
+  }
+  
+  .link-dark {
+    color: #004F39;
+    font-size: 0.95rem;
+  }
+  
+  /* === MAPPA INTERATTIVA === */
+  .map-area {
+    background-color: #EAE9E7;
+    height: 400px;
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid #004F39;
+    margin-top: 1rem;
+  }
+  
+  /* === PUBBLICITÀ SEZIONE === */
+  .image-box {
+    background-color: #EAE9E7;
+    color: #151513;
+    min-height: 200px;
+    border: 2px solid #004F39;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .ad-text {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-top: 1rem;
+    color: #151513;
+  }
+  
+  /* === FOOTER === */
+  footer {
+    background-color: #151513;
+    color: #EAE9E7;
+    padding: 2rem 2rem;
+    margin-top: 3rem;
+  }
+  
+  footer h6 {
+    color: #FFFACA;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  footer p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  footer small {
+    color: #EAE9E7;
+  }
+  
+  footer button {
+    background-color: transparent;
+    color: #FFFACA;
+    border: 1px solid #FFFACA;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+  }
+  
+  footer button:hover {
+    background-color: #004F39;
+    color: white;
+  }
+  
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .navbar-nav {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .map-area {
+      height: 300px;
+    }
+  
+    .image-box {
+      margin-bottom: 1.5rem;
+    }
+  
+    footer .row {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    footer .d-flex {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+  

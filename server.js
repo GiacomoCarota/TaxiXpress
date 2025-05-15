@@ -5,7 +5,6 @@ const path = require("path");
 const crypto = require("crypto");
 const postgres = require('postgres');
 
-
 require("dotenv").config();
 
 const app = express();
@@ -14,11 +13,10 @@ const port = 3000;
 const connectionString = process.env.DATABASE_URL
 const sql = postgres(connectionString)
 
-
 // Configura CORS
 app.use(cors());
 
-app.use(express.static(path.join(__dirname, "html")));
+app.use("/html", express.static(path.join(__dirname, "html")));
 app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/img", express.static(path.join(__dirname, "img")));
@@ -54,9 +52,7 @@ try {
 
     res.status(200).json({
         idu: user.idu,
-        idvenditore: user.idvenditore,
-        idcliente: user.idcliente,
-        username: user.name,
+        nome: user.name,
         email: user.email,
     });
     } catch (error) {
@@ -83,12 +79,11 @@ try {
     }
 
     const idCliente = generateRandomId(8); // Lunghezza 8 caratteri
-    const idVenditore = generateRandomId(10);
     // Hash della password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Inserisci il nuovo utente nel database
-    await sql`INSERT INTO utente (name, surname, email, passhash, idcliente, idvenditore) VALUES (${name}, ${surname}, ${email}, ${hashedPassword}, ${idCliente}, ${idVenditore})`
+    await sql`INSERT INTO utente (nome, cognome, email, password, tipo) VALUES (${name}, ${surname}, ${email}, ${hashedPassword},${tipo})`
 
     res.status(201).json({ message: "Registrazione effettuata con successo" });
     } catch (error) {
