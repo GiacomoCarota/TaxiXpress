@@ -1,90 +1,165 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="https://cdn.tailwindcss.com">
+    <title>Register - SwiftRide Taxi Service</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body>
-    <section class="hidden py-16 px-4 auth-container text-white" id="register">
-<div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
-<div class="md:flex">
-<div class="p-8 w-full">
-<div class="flex justify-between items-center mb-8">
-<h2 class="text-2xl font-bold text-gray-800">Create New Account</h2>
-<button class="text-gray-500 hover:text-gray-700" onclick="hideSection('register')">
-<i class="fas fa-times"></i>
-</button>
-</div>
-<form class="space-y-6">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-<div>
-<label class="block text-sm font-medium text-gray-700" for="first-name">First Name</label>
-<input class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" id="first-name" placeholder="John" type="text"/>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700" for="last-name">Last Name</label>
-<input class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" id="last-name" placeholder="Doe" type="text"/>
-</div>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700" for="register-email">Email</label>
-<input class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" id="register-email" placeholder="your@email.com" type="email"/>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700" for="phone">Phone Number</label>
-<input class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" id="phone" placeholder="+1 (555) 123-4567" type="tel"/>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700" for="register-password">Password</label>
-<input class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" id="register-password" placeholder="••••••••" type="password"/>
-</div>
-<div>
-<label class="block text-sm font-medium text-gray-700" for="confirm-password">Confirm Password</label>
-<input class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" id="confirm-password" placeholder="••••••••" type="password"/>
-</div>
-<div class="flex items-center">
-<input class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" id="terms" name="terms" type="checkbox"/>
-<label class="ml-2 block text-sm text-gray-700" for="terms">
-                                I agree to the <a class="text-blue-600 hover:text-blue-500" href="#">Terms of Service</a> and <a class="text-blue-600 hover:text-blue-500" href="#">Privacy Policy</a>
-</label>
-</div>
-<div>
-<button class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" type="submit">Create Account</button>
-</div>
-</form>
-<div class="mt-6">
-<div class="relative">
-<div class="absolute inset-0 flex items-center">
-<div class="w-full border-t border-gray-300"></div>
-</div>
-<div class="relative flex justify-center text-sm">
-<span class="px-2 bg-white text-gray-500">Or sign up with</span>
-</div>
-</div>
-<div class="mt-6 grid grid-cols-2 gap-3">
-<button class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" type="button">
-<i class="fab fa-google text-red-500 mr-2"></i> Google
+<body class="bg-gray-100">
+    <!-- Header/Navigation -->
+    <header class="bg-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center">
+                        <i class="fas fa-taxi text-2xl text-blue-600 mr-2"></i>
+                        <span class="font-bold text-xl text-gray-800">SwiftRide</span>
+                    </a>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-600 hover:text-blue-600 transition duration-300">Home</a>
+                    <a href="book.html" class="text-gray-600 hover:text-blue-600 transition duration-300">Book Ride</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-blue-600 transition duration-300">Pricing</a>
+                    <a href="#contact" class="text-gray-600 hover:text-blue-600 transition duration-300">Contact</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="login.html" class="text-blue-600 hover:text-blue-800 transition duration-300">Login</a>
+                    <a href="register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Register</a>
+                </div>
+                <button class="md:hidden text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Register Section -->
+    <section class="py-16 px-4 auth-container text-white">
+        <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+            <div class="md:flex">
+                <div class="p-8 w-full">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800">Create New Account</h2>
+                    </div>
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="first-name" class="block text-sm font-medium text-gray-700">First Name</label>
+                                <input type="text" id="first-name" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="John">
+                            </div>
+                            <div>
+                                <label for="last-name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                                <input type="text" id="last-name" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="Doe">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="register-email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="register-email" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="your@email.com">
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                            <input type="tel" id="phone" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="+1 (555) 123-4567">
+                        </div>
+                        <div>
+                            <label for="register-password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <input type="password" id="register-password" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="••••••••">
+                        </div>
+                        <div>
+                            <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                            <input type="password" id="confirm-password" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="••••••••">
+                        </div>
+                        <div class="flex items-center">
+                            <input id="terms" name="terms" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="terms" class="ml-2 block text-sm text-gray-700">
+                                I agree to the <a href="#" class="text-blue-600 hover:text-blue-500">Terms of Service</a> and <a href="#" class="text-blue-600 hover:text-blue-500">Privacy Policy</a>
+                            </label>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Create Account</button>
+                        </div>
+                    </form>
+                    <div class="mt-6">
+                        <div class="relative">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 bg-white text-gray-500">Or sign up with</span>
+                            </div>
+                        </div>
+                        <div class="mt-6 grid grid-cols-2 gap-3">
+                            <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <i class="fab fa-google text-red-500 mr-2"></i> Google
                             </button>
-<button class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" type="button">
-<i class="fab fa-facebook text-blue-600 mr-2"></i> Facebook
+                            <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <i class="fab fa-facebook text-blue-600 mr-2"></i> Facebook
                             </button>
-</div>
-</div>
-<div class="mt-6 text-center">
-<p class="text-sm text-gray-600">
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600">
                             Already have an account? 
-                            <button class="font-medium text-blue-600 hover:text-blue-500" onclick="showSection('login'); hideSection('register')">Login here</button>
-</p>
-</div>
-</div>
-</div>
-</div>
-</section>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/js/script.js"></script>
+                            <a href="login.html" class="font-medium text-blue-600 hover:text-blue-500">Login here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-taxi text-2xl text-blue-400 mr-2"></i>
+                        <span class="font-bold text-xl">SwiftRide</span>
+                    </div>
+                    <p class="text-gray-400">Your reliable transportation partner, available 24/7 for all your travel needs.</p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="book.html" class="text-gray-400 hover:text-white">Book Ride</a></li>
+                        <li><a href="#pricing" class="text-gray-400 hover:text-white">Pricing</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Airport Transfers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">City Tours</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Corporate Travel</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Wedding Services</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Newsletter</h3>
+                    <p class="text-gray-400 mb-4">Subscribe to our newsletter for the latest offers and updates.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 bg-gray-700 text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 transition duration-300">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 SwiftRide Taxi Service. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
