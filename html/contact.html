@@ -3,102 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact</title>
-    <link rel="stylesheet" href="https://cdn.tailwindcss.com">
+    <title>Contact Us - SwiftRide Taxi Service</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
-<body>
-    <section class="hidden py-16 px-4" id="contact">
-<div class="max-w-6xl mx-auto">
-<h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Contact Us</h2>
-<div class="flex flex-col md:flex-row gap-8">
-<div class="md:w-1/2 bg-white p-8 rounded-xl shadow-lg">
-<h3 class="text-xl font-bold text-gray-800 mb-6">Send us a message</h3>
-<form class="space-y-4">
-<div>
-<label class="block text-gray-700 font-medium mb-2">Name</label>
-<input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="Your name" type="text"/>
-</div>
-<div>
-<label class="block text-gray-700 font-medium mb-2">Email</label>
-<input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="your@email.com" type="email"/>
-</div>
-<div>
-<label class="block text-gray-700 font-medium mb-2">Subject</label>
-<input class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="Subject" type="text"/>
-</div>
-<div>
-<label class="block text-gray-700 font-medium mb-2">Message</label>
-<textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="Your message" rows="4"></textarea>
-</div>
-<button class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300" type="submit">Send Message</button>
-</form>
-</div>
-<div class="md:w-1/2">
-<div class="bg-white p-8 rounded-xl shadow-lg mb-6">
-<h3 class="text-xl font-bold text-gray-800 mb-6">Contact Information</h3>
-<div class="space-y-4">
-<div class="flex items-start">
-<i class="fas fa-map-marker-alt text-blue-500 mt-1 mr-3"></i>
-<div>
-<h4 class="font-medium text-gray-800">Address</h4>
-<p class="text-gray-600">123 Taxi Street, Suite 100<br/>New York, NY 10001</p>
-</div>
-</div>
-<div class="flex items-start">
-<i class="fas fa-phone-alt text-blue-500 mt-1 mr-3"></i>
-<div>
-<h4 class="font-medium text-gray-800">Phone</h4>
-<p class="text-gray-600">+1 (555) 123-4567<br/>24/7 Customer Support</p>
-</div>
-</div>
-<div class="flex items-start">
-<i class="fas fa-envelope text-blue-500 mt-1 mr-3"></i>
-<div>
-<h4 class="font-medium text-gray-800">Email</h4>
-<p class="text-gray-600">support@swiftride.com<br/>info@swiftride.com</p>
-</div>
-</div>
-</div>
-</div>
-<div class="bg-white p-8 rounded-xl shadow-lg">
-<h3 class="text-xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h3>
-<div class="space-y-4">
-<div class="border-b border-gray-200 pb-4">
-<button class="flex justify-between items-center w-full text-left font-medium text-gray-800" onclick="toggleFAQ(1)">
-<span>How do I book a taxi?</span>
-<i class="fas fa-chevron-down text-blue-500"></i>
-</button>
-<div class="hidden mt-2 text-gray-600" id="faq-1">
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <a href="/html/home.html" class="flex items-center">
+                        <i class="fas fa-taxi text-2xl text-blue-600 mr-2"></i>
+                        <span class="font-bold text-xl text-gray-800">SwiftRide</span>
+                    </a>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="/html/home.html" class="text-gray-600 hover:text-blue-600 transition duration-300">Home</a>
+                    <a href="/html/book.html" class="text-gray-600 hover:text-blue-600 transition duration-300">Book Ride</a>
+                    <a href="/html/pricing.html" class="text-gray-600 hover:text-blue-600 transition duration-300">Pricing</a>
+                    <a href="/html/contact.html" class="text-blue-600 font-medium">Contact</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="/html/login.html" class="text-blue-600 hover:text-blue-800 transition duration-300">Login</a>
+                    <a href="/html/register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Register</a>
+                </div>
+                <button class="md:hidden text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-blue-600 text-white py-16">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Get in Touch</h1>
+            <p class="text-xl max-w-2xl mx-auto">Have questions or need assistance? We're here to help 24/7.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 px-4">
+        <div class="max-w-6xl mx-auto">            
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="md:w-1/2 bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">Send us a message</h3>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Name</label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your name">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Email</label>
+                            <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="your@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Subject</label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Subject">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Message</label>
+                            <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your message"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">Send Message</button>
+                    </form>
+                </div>
+                
+                <div class="md:w-1/2">
+                    <div class="bg-white p-8 rounded-xl shadow-lg mb-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Contact Information</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <i class="fas fa-map-marker-alt text-blue-500 mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Address</h4>
+                                    <p class="text-gray-600">123 Taxi Street, Suite 100<br>New York, NY 10001</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-phone-alt text-blue-500 mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Phone</h4>
+                                    <p class="text-gray-600">+1 (555) 123-4567<br>24/7 Customer Support</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-envelope text-blue-500 mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Email</h4>
+                                    <p class="text-gray-600">support@swiftride.com<br>info@swiftride.com</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-8 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h3>
+                        <div class="space-y-4">
+                            <div class="border-b border-gray-200 pb-4">
+                                <button class="flex justify-between items-center w-full text-left font-medium text-gray-800" onclick="toggleFAQ(1)">
+                                    <span>How do I book a taxi?</span>
+                                    <i class="fas fa-chevron-down text-blue-500"></i>
+                                </button>
+                                <div id="faq-1" class="hidden mt-2 text-gray-600">
                                     You can book a taxi through our website, mobile app, or by calling our customer service. Online booking is the fastest and most convenient method.
                                 </div>
-</div>
-<div class="border-b border-gray-200 pb-4">
-<button class="flex justify-between items-center w-full text-left font-medium text-gray-800" onclick="toggleFAQ(2)">
-<span>What payment methods do you accept?</span>
-<i class="fas fa-chevron-down text-blue-500"></i>
-</button>
-<div class="hidden mt-2 text-gray-600" id="faq-2">
+                            </div>
+                            <div class="border-b border-gray-200 pb-4">
+                                <button class="flex justify-between items-center w-full text-left font-medium text-gray-800" onclick="toggleFAQ(2)">
+                                    <span>What payment methods do you accept?</span>
+                                    <i class="fas fa-chevron-down text-blue-500"></i>
+                                </button>
+                                <div id="faq-2" class="hidden mt-2 text-gray-600">
                                     We accept cash, credit/debit cards (Visa, MasterCard, American Express), and mobile payments like Apple Pay and Google Pay.
                                 </div>
-</div>
-<div class="border-b border-gray-200 pb-4">
-<button class="flex justify-between items-center w-full text-left font-medium text-gray-800" onclick="toggleFAQ(3)">
-<span>Can I schedule a ride in advance?</span>
-<i class="fas fa-chevron-down text-blue-500"></i>
-</button>
-<div class="hidden mt-2 text-gray-600" id="faq-3">
+                            </div>
+                            <div class="border-b border-gray-200 pb-4">
+                                <button class="flex justify-between items-center w-full text-left font-medium text-gray-800" onclick="toggleFAQ(3)">
+                                    <span>Can I schedule a ride in advance?</span>
+                                    <i class="fas fa-chevron-down text-blue-500"></i>
+                                </button>
+                                <div id="faq-3" class="hidden mt-2 text-gray-600">
                                     Yes, you can schedule rides up to 30 days in advance through our website or app. Just select the "Schedule Later" option when booking.
                                 </div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="py-12 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Our Location</h2>
+            <div id="map" class="h-96 rounded-xl shadow-lg"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 px-4 mt-auto">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-taxi text-2xl text-blue-400 mr-2"></i>
+                        <span class="font-bold text-xl">SwiftRide</span>
+                    </div>
+                    <p class="text-gray-400">Your reliable transportation partner, available 24/7 for all your travel needs.</p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/html/home.html" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="/html/book.html" class="text-gray-400 hover:text-white">Book Ride</a></li>
+                        <li><a href="/html/pricing.html" class="text-gray-400 hover:text-white">Pricing</a></li>
+                        <li><a href="/html/contact.html" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Airport Transfers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">City Tours</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Corporate Travel</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Wedding Services</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Newsletter</h3>
+                    <p class="text-gray-400 mb-4">Subscribe to our newsletter for the latest offers and updates.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 bg-gray-700 text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 transition duration-300">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 TaxiXpress. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/js/script.js"></script>
+    <script>
+        // Initialize Map
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = L.map('map').setView([40.7128, -74.0060], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // Add marker for company location
+            L.marker([40.7128, -74.0060]).addTo(map)
+                .bindPopup('SwiftRide Taxi Service<br>123 Taxi Street, Suite 100<br>New York, NY 10001')
+                .openPopup();
+        });
+
+        // FAQ Toggle
+        function toggleFAQ(id) {
+            const faqContent = document.getElementById(`faq-${id}`);
+            if (faqContent.classList.contains('hidden')) {
+                faqContent.classList.remove('hidden');
+            } else {
+                faqContent.classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>
