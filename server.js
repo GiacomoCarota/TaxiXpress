@@ -62,15 +62,15 @@ try {
 });
 
 app.post("/signup", async (req, res) => {
-    const { name, surname, email, password } = req.body;
+    const { name, surname, email, password, phone } = req.body;
     console.log("Dati Ricevuti");
-    console.log(name,surname,email,password);
-    if (!name || !surname || !email || !password) {
+    console.log(name,surname,email,password,phone);
+    if (!name || !surname || !email || !password || !phone) {
     return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
 }
 
 try {
-    
+    const tipo = "cliente"
     // Controlla se l'utente esiste già
     const userCheck = await sql`SELECT * FROM utente WHERE email = ${email}`
     console.log(userCheck)
@@ -83,7 +83,7 @@ try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Inserisci il nuovo utente nel database
-    await sql`INSERT INTO utente (nome, cognome, email, password, tipo) VALUES (${name}, ${surname}, ${email}, ${hashedPassword},${tipo})`
+    await sql`INSERT INTO utente (nome, cognome, email, password, tipo, phone) VALUES (${name}, ${surname}, ${email}, ${hashedPassword},${tipo}, ${phone})`
 
     res.status(201).json({ message: "Registrazione effettuata con successo" });
     } catch (error) {
@@ -99,62 +99,38 @@ app.listen(port, () => {
 });
 
 
-app.get("/api/punti", async (req, res) => {
-    try {
-      const punti = await sql`SELECT * FROM punto`;
-      res.json(punti);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Errore nel caricamento dei punti" });
-    }
-  });
+app.post("/api/prenotazioni-geo", async (req, res) => {
+  const { idU, pickup, dropoff, OrarioDiPartenza } = req.body;
 
-app.post("/api/prenotazioni", async (req, res) => {
-const { OrarioDiPartenza, idPuP, idPuA, idU } = req.body;
-
-if (!OrarioDiPartenza || !idPuP || !idPuA || !idU) {
+  if (!idU || !pickup || !dropoff || !OrarioDiPartenza) {
     return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
-}
+  }
 
-try {
-    const idP = crypto.randomUUID(); // oppure usa il tuo metodo
+  try {
+    const idPuP = crypto.randomUUID().slice(0, 8);
+    const idPuA = crypto.randomUUID().slice(0, 8);
+    const idP = crypto.randomUUID().slice(0, 8);
+
+    // Inserisci i punti
     await sql`
-    INSERT INTO prenotazione (idP, OrarioDiPartenza, idPuP, idPuA, idU)
-    VALUES (${idP}, ${OrarioDiPartenza}, ${idPuP}, ${idPuA}, ${idU})
+      INSERT INTO punto (idPu, Città, Via, Numero_Civico)
+      VALUES (${idPuP}, '', ${pickup}, '')
     `;
-    res.status(201).json({ message: "Prenotazione creata" });
-} catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Errore nella creazione della prenotazione" });
-}
-});
-app.get("/api/punti", async (req, res) => {
-    try {
-      const punti = await sql`SELECT * FROM punto`;
-      res.json(punti);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Errore nel caricamento dei punti" });
-    }
-  });
+    await sql`
+      INSERT INTO punto (idPu, Città, Via, Numero_Civico)
+      VALUES (${idPuA}, '', ${dropoff}, '')
+    `;
 
-  app.post("/api/prenotazioni", async (req, res) => {
-    const { OrarioDiPartenza, idPuP, idPuA, idU } = req.body;
-  
-    if (!OrarioDiPartenza || !idPuP || !idPuA || !idU) {
-      return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
-    }
-  
-    try {
-      const idP = crypto.randomUUID(); // oppure usa il tuo metodo
-      await sql`
-        INSERT INTO prenotazione (idP, OrarioDiPartenza, idPuP, idPuA, idU)
-        VALUES (${idP}, ${OrarioDiPartenza}, ${idPuP}, ${idPuA}, ${idU})
-      `;
-      res.status(201).json({ message: "Prenotazione creata" });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Errore nella creazione della prenotazione" });
-    }
-  });
-  
+    // Inserisci la prenotazione
+    await sql`
+      INSERT INTO prenotazione (idP, OrarioDiPartenza, idPuP, idPuA, idU)
+      VALUES (${idP}, ${OrarioDiPartenza}, ${idPuP}, ${idPuA}, ${idU})
+    `;
+
+    res.status(201).json({ message: "Prenotazione registrata con successo!" });
+
+  } catch (error) {
+    console.error("Errore durante la prenotazione:", error);
+    res.status(500).json({ error: "Errore durante la prenotazione" });
+  }
+});
