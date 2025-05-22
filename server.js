@@ -3,15 +3,15 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const crypto = require("crypto");
-const postgres = require('postgres');
+const postgres = require("postgres");
 
 require("dotenv").config();
 
 const app = express();
 const port = 3000;
 
-const connectionString = process.env.DATABASE_URL
-const sql = postgres(connectionString)
+const connectionString = process.env.DATABASE_URL;
+const sql = postgres(connectionString);
 
 // Configura CORS
 app.use(cors());
@@ -27,55 +27,63 @@ function generateRandomId() {
 }
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "html", "home.html"));
+  res.sendFile(path.join(__dirname, "html", "home.html"));
 });
 
 app.post("/login", async (req, res) => {
-const { email, password } = req.body;
+  const { email, password } = req.body;
+  console.log("🔔 /login ricevuto:", { email, password });
 
-if (!email || !password) {
+  if (!email || !password) {
+    console.log("⚠️ campi mancanti");
     return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
-}
+  }
 
-try {
+  try {
     const users = await sql`SELECT * FROM utente WHERE email = ${email}`;
     const user = users[0];
+    console.log("📋 utente trovato:", user);
 
     if (!user) {
-        return res.status(401).json({ error: "Email o password errati" });
+      console.log("❌ utente non esiste");
+      return res.status(401).json({ error: "Email o password errati" });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.passhash);
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    console.log("🔐 passwordMatch:", passwordMatch);
+
     if (!passwordMatch) {
-        return res.status(401).json({ error: "Email o password errati" });
+      console.log("❌ password sbagliata");
+      return res.status(401).json({ error: "Email o password errati" });
     }
 
-    res.status(200).json({
-        idu: user.idu,
-        nome: user.name,
-        email: user.email,
-    });
-    } catch (error) {
-    console.error("Errore durante il login:", error.message);
-    res.status(500).json({ error: "Errore del server, riprova più tardi" });
-    }
+    console.log("✅ autenticazione OK, invio 200");
+    // Nota: restituiamo i campi che hai in tabella (se la colonna si chiama `nome`, usala!)
+    return res
+      .status(200)
+      .json({ idu: user.idu, nome: user.nome /* non user.name! */, email: user.email });
+  } catch (error) {
+    console.error("💥 Errore interno /login:", error);
+    return res.status(500).json({ error: "Errore del server, riprova più tardi" });
+  }
 });
 
-app.post("/signup", async (req, res) => {
-    const { name, surname, email, password, phone } = req.body;
-    console.log("Dati Ricevuti");
-    console.log(name,surname,email,password,phone);
-    if (!name || !surname || !email || !password || !phone) {
-    return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
-}
 
-try {
-    const tipo = "cliente"
+app.post("/signup", async (req, res) => {
+  const { name, surname, email, password, phone } = req.body;
+  console.log("Dati Ricevuti");
+  console.log(name, surname, email, password, phone);
+  if (!name || !surname || !email || !password || !phone) {
+    return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
+  }
+
+  try {
+    const tipo = "cliente";
     // Controlla se l'utente esiste già
-    const userCheck = await sql`SELECT * FROM utente WHERE email = ${email}`
-    console.log(userCheck)
+    const userCheck = await sql`SELECT * FROM utente WHERE email = ${email}`;
+    console.log(userCheck);
     if (userCheck.length > 0) {
-        return res.status(409).json({ error: "Email già registrata" });
+      return res.status(409).json({ error: "Email già registrata" });
     }
 
     const idCliente = generateRandomId(8); // Lunghezza 8 caratteri
@@ -83,21 +91,19 @@ try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Inserisci il nuovo utente nel database
-    await sql`INSERT INTO utente (nome, cognome, email, password, tipo, phone) VALUES (${name}, ${surname}, ${email}, ${hashedPassword},${tipo}, ${phone})`
+    await sql`INSERT INTO utente (nome, cognome, email, password, tipo, phone) VALUES (${name}, ${surname}, ${email}, ${hashedPassword},${tipo}, ${phone})`;
 
     res.status(201).json({ message: "Registrazione effettuata con successo" });
-    } catch (error) {
+  } catch (error) {
     console.error("Errore durante la registrazione:", error);
     res.status(500).json({ error: error.message });
-    }
+  }
 });
-
 
 // Avvia il server
 app.listen(port, () => {
-    console.log(`Server avviato su http://localhost:${port}`);
+  console.log(`Server avviato su http://localhost:${port}`);
 });
-
 
 app.post("/api/prenotazioni-geo", async (req, res) => {
   const { idU, pickup, dropoff, OrarioDiPartenza } = req.body;
@@ -128,7 +134,6 @@ app.post("/api/prenotazioni-geo", async (req, res) => {
     `;
 
     res.status(201).json({ message: "Prenotazione registrata con successo!" });
-
   } catch (error) {
     console.error("Errore durante la prenotazione:", error);
     res.status(500).json({ error: "Errore durante la prenotazione" });
