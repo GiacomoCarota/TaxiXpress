@@ -13,7 +13,16 @@ const port = 3000;
 const connectionString = process.env.DATABASE_URL;
 const sql = postgres(connectionString);
 
-// Configura CORS
+async function testDb() {
+  try {
+    const result = await sql`SELECT 1 as test`;
+    console.log("✅ Database connesso:", result);
+  } catch (error) {
+    console.error("❌ Errore database:", error);
+  }
+}
+testDb();
+
 app.use(cors());
 
 app.use("/html", express.static(path.join(__dirname, "html")));
@@ -21,6 +30,7 @@ app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/img", express.static(path.join(__dirname, "img")));
 app.use(express.json());
+
 
 function generateRandomId() {
   return crypto.randomBytes(8).toString("hex").substring(0, 8); // Usa "length" per limitare i caratteri
@@ -32,39 +42,79 @@ app.get("/", (req, res) => {
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log("🔔 /login ricevuto:", { email, password });
+  console.log("🔔 /login ricevuto:", { email, password: "***" }); // Non loggare la password in chiaro
 
+  // Validazione input
   if (!email || !password) {
-    console.log("⚠️ campi mancanti");
-    return res.status(400).json({ error: "Tutti i campi sono obbligatori" });
+    console.log("⚠️ Campi mancanti");
+    return res.status(400).json({ 
+      error: "Email e password sono obbligatori",
+      success: false 
+    });
+  }
+
+  // Validazione formato email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    console.log("⚠️ Formato email non valido");
+    return res.status(400).json({ 
+      error: "Formato email non valido",
+      success: false 
+    });
   }
 
   try {
-    const users = await sql`SELECT * FROM utente WHERE email = ${email}`;
+    // Query per trovare l'utente
+    const users = await sql`
+      SELECT idu, nome, email, password 
+      FROM utente 
+      WHERE email = ${email.toLowerCase().trim()}
+    `;
+    
     const user = users[0];
-    console.log("📋 utente trovato:", user);
+    console.log("📋 Ricerca utente completata:", user ? "Trovato" : "Non trovato");
 
     if (!user) {
-      console.log("❌ utente non esiste");
-      return res.status(401).json({ error: "Email o password errati" });
+      console.log("❌ Utente non esistente per email:", email);
+      return res.status(401).json({ 
+        error: "Credenziali non valide",
+        success: false 
+      });
     }
 
+    // Verifica password
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log("🔐 passwordMatch:", passwordMatch);
+    console.log("🔐 Verifica password:", passwordMatch ? "OK" : "FALLITA");
 
     if (!passwordMatch) {
-      console.log("❌ password sbagliata");
-      return res.status(401).json({ error: "Email o password errati" });
+      console.log("❌ Password errata per utente:", user.email);
+      return res.status(401).json({ 
+        error: "Credenziali non valide",
+        success: false 
+      });
     }
 
-    console.log("✅ autenticazione OK, invio 200");
-    // Nota: restituiamo i campi che hai in tabella (se la colonna si chiama `nome`, usala!)
-    return res
-      .status(200)
-      .json({ idu: user.idu, nome: user.nome /* non user.name! */, email: user.email });
+    console.log("✅ Autenticazione riuscita per utente:", user.email);
+    
+    // Risposta di successo (senza la password!)
+    return res.json({
+      success: true,
+      message: "Login effettuato con successo",
+      user: {
+        idu: user.idu,
+        nome: user.nome,
+        email: user.email
+      }
+    });
+
   } catch (error) {
-    console.error("💥 Errore interno /login:", error);
-    return res.status(500).json({ error: "Errore del server, riprova più tardi" });
+    console.error("💥 Errore interno /login:", error.message);
+    console.error("Stack trace:", error.stack);
+    
+    return res.status(500).json({ 
+      error: "Errore interno del server",
+      success: false 
+    });
   }
 });
 
@@ -85,8 +135,6 @@ app.post("/signup", async (req, res) => {
     if (userCheck.length > 0) {
       return res.status(409).json({ error: "Email già registrata" });
     }
-
-    const idCliente = generateRandomId(8); // Lunghezza 8 caratteri
     // Hash della password
     const hashedPassword = await bcrypt.hash(password, 10);
 

@@ -1,5 +1,12 @@
-const base = window.location.origin;
-// Funzione per il login
+document.getElementById("login-form").addEventListener("submit", function (event) {
+    event.preventDefault(); // 🔒 Blocca il submit classico
+    login(); // tua funzione async
+  });
+
+document.getElementById("register-form").addEventListener("submit", function (event) {
+    event.preventDefault(); // 🔒 Blocca il submit classico
+    Signup(); // tua funzione async
+  });// Funzione per il login
 async function login() {
 const email = document.getElementById("login-email").value.trim();
 const password = document.getElementById("login-password").value;
@@ -9,9 +16,11 @@ console.log("🚀 Invio login con:", { email, password });
 let response;
 try {
     response = await fetch("/login", {
+
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
+        
     });
   } catch (err) {
     console.error("❌ Fetch fallita:", err);
