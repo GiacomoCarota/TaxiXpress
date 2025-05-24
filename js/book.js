@@ -1,54 +1,3 @@
-// document.addEventListener("DOMContentLoaded", () => {
-//   const user = JSON.parse(localStorage.getItem("user"));
-//   if (!user) {
-//     alert("Devi prima effettuare il login.");
-//     window.location.href = "/html/login.html";
-//     return;
-//   }
-
-//   const confirmButton = document.querySelector("button.w-full");
-
-//   confirmButton.addEventListener("click", async (e) => {
-//     e.preventDefault();
-
-//     const pickup = document.querySelector("#pickup-now").value.trim();
-//     const dropoff = document.querySelector("#dropoff-now").value.trim();
-//     const orario = new Date().toISOString();
-
-//     if (!pickup || !dropoff) {
-//       alert("Inserisci sia punto di partenza che arrivo.");
-//       return;
-//     }
-
-//     const payload = {
-//       idU: user.idu,
-//       pickup,
-//       dropoff,
-//       OrarioDiPartenza: orario,
-//     };
-
-//     try {
-//       const res = await fetch("/api/prenotazioni-geo", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify(payload),
-//       });
-
-//       const data = await res.json();
-//       if (res.ok) {
-//         alert("Prenotazione effettuata con successo!");
-//         window.location.href = "/html/home.html";
-//       } else {
-//         alert(data.error || "Errore durante la prenotazione");
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       alert("Errore di rete durante la prenotazione.");
-//     }
-//   });
-// });
-
-
 // Configurazione mappa e variabili globali
 let map;
 let pickupMarker;
@@ -403,17 +352,12 @@ function validateBookingData(data) {
 }
 
 // Salvare prenotazione nel database tramite API
-async function saveBooking(bookingData, authToken) {
+async function saveBooking(bookingData) {
     try {
         const headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         };
-        
-        // Aggiungere token di autenticazione se presente
-        if (authToken) {
-            headers['Authorization'] = `Bearer ${authToken}`;
-        }
         
         const response = await fetch('/api/bookings', {
             method: 'POST',
@@ -440,15 +384,16 @@ function checkUserAuthentication() {
     try {
         const user = localStorage.getItem('user');
         
+
         if (!user) {
             return null;
         }
         
         // Parsare dati utente
         const userData = JSON.parse(user);
-        
+        console.log('Controllo autenticazione utente:', userData.user);
         return {
-            user: userData,
+            user: userData.user
         };
         
     } catch (error) {
@@ -467,7 +412,7 @@ function showLoginRequiredModal() {
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'login-required-modal';
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-999';
         modal.innerHTML = `
             <div class="bg-white p-6 rounded-lg max-w-md mx-4">
                 <div class="text-center">
@@ -521,7 +466,7 @@ async function handleBookingConfirmation() {
     try {
         // Verificare autenticazione PRIMA di tutto
         const authData = checkUserAuthentication();
-        
+        console.log('Dati autenticazione utente:', authData.user);
         if (!authData) {
             showLoginRequiredModal();
             return;
@@ -540,13 +485,13 @@ async function handleBookingConfirmation() {
         }
         
         // Aggiungere dati utente alla prenotazione
-        bookingData.user_id = authData.user.id || authData.user.user_id;
+        bookingData.user_id = authData.user.idu || authData.user.user_id;
         bookingData.user_email = authData.user.email;
-        bookingData.user_name = authData.user.name || authData.user.full_name;
+        bookingData.user_name = authData.user.nome || authData.user.full_name;
         bookingData.user_phone = authData.user.phone || authData.user.phone_number;
         
         // Salvare nel database
-        const result = await saveBooking(bookingData, authData.token);
+        const result = await saveBooking(bookingData);
         
         hideLoadingModal();
         
@@ -563,7 +508,6 @@ async function handleBookingConfirmation() {
         // Gestire errori di autenticazione
         if (error.message.includes('401') || error.message.includes('Unauthorized')) {
             localStorage.removeItem('user');
-            localStorage.removeItem('authToken');
             showLoginRequiredModal();
         } else {
             alert('Errore durante la prenotazione: ' + error.message);
@@ -681,7 +625,7 @@ function displayUserInfo() {
                 <div class="flex items-center">
                     <i class="fas fa-user-check text-green-600 mr-3"></i>
                     <div>
-                        <div class="font-medium text-green-800">Benvenuto, ${authData.user.name || authData.user.full_name || 'Utente'}!</div>
+                        <div class="font-medium text-green-800">Benvenuto, ${authData.user.nome || authData.user.full_name || 'Utente'}!</div>
                         <div class="text-sm text-green-600">${authData.user.email}</div>
                     </div>
                 </div>
@@ -723,7 +667,7 @@ function checkPostLoginRedirect() {
         const authData = checkUserAuthentication();
         if (authData) {
             // Creare e mostrare toast di benvenuto
-            showWelcomeToast(authData.user.name || authData.user.full_name || 'Utente');
+            showWelcomeToast(authData.user.nome || authData.user.full_name || 'Utente');
         }
     }
 }

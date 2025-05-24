@@ -103,7 +103,8 @@ app.post("/login", async (req, res) => {
       user: {
         idu: user.idu,
         nome: user.nome,
-        email: user.email
+        email: user.email,
+        phone: user.phone
       }
     });
 
