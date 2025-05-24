@@ -7,7 +7,7 @@ body {
 
 /* Stile per i bottoni */
 .btn-primary {
-  background-color: #3b82f6;
+  background-color: #004F39;
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -74,5 +74,5 @@ footer {
 }
 
 .brand-icon {
-  color: #3b82f6;
+  color: #004F39;
 }

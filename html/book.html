@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book a Ride - SwiftRide Taxi Service</title>
+    <title>Book a Ride - TaxiXpress Taxi Service</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -15,21 +15,21 @@
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center">
                     <a href="home.html" class="flex items-center">
-                        <i class="fas fa-taxi text-2xl text-blue-600 mr-2"></i>
-                        <span class="font-bold text-xl text-gray-800">SwiftRide</span>
+                        <i class="fas fa-taxi text-2xl text-green-800 mr-2"></i>
+                        <span class="font-bold text-xl text-gray-800">TaxiXpress</span>
                     </a>
                 </div>
                 <nav class="hidden md:flex space-x-8">
-                    <a href="/html/home.html" class="text-gray-600 hover:text-blue-600 transition duration-300">Home</a>
-                    <a href="/html/book.html" class="text-blue-600 font-medium">Book Ride</a>
-                    <a href="/html/pricing.html" class="text-gray-600 hover:text-blue-600 transition duration-300">Pricing</a>
-                    <a href="/html/contact.html" class="text-gray-600 hover:text-blue-600 transition duration-300">Contact</a>
+                    <a href="/html/home.html" class="text-gray-600 hover:text-green-600 transition duration-300">Home</a>
+                    <a href="/html/book.html" class="text-green-800 font-medium">Book Ride</a>
+                    <a href="/html/pricing.html" class="text-gray-600 hover:text-green-600 transition duration-300">Pricing</a>
+                    <a href="/html/contact.html" class="text-gray-600 hover:text-green-600 transition duration-300">Contact</a>
                 </nav>
                 <div class="hidden md:flex items-center space-x-4">
-                    <a href="/html/login.html" class="text-blue-600 hover:text-blue-800 transition duration-300">Login</a>
-                    <a href="/html/register.html" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">Register</a>
+                    <a href="/html/login.html" class="text-green-800 hover:text-blue-800 transition duration-300">Login</a>
+                    <a href="/html/register.html" class="bg-green-800 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Register</a>
                 </div>
-                <button class="md:hidden text-gray-600 hover:text-blue-600">
+                <button class="md:hidden text-gray-600 hover:text-green-600">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
             </div>
@@ -54,7 +54,7 @@
                             <label class="block text-gray-700 font-medium mb-2">Pickup Location</label>
                             <div class="relative">
                                 <input type="text" id="pickup-now" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="Enter pickup address">
-                                <button class="absolute right-3 top-2 text-blue-600" onclick="getCurrentLocation('pickup-now')">
+                                <button class="absolute right-3 top-2 text-green-600" onclick="getCurrentLocation('pickup-now')">
                                     <i class="fas fa-location-arrow"></i>
                                 </button>
                             </div>
@@ -71,7 +71,7 @@
                             <label class="block text-gray-700 font-medium mb-2">Pickup Location</label>
                             <div class="relative">
                                 <input type="text" id="pickup-later" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 input-highlight" placeholder="Enter pickup address">
-                                <button class="absolute right-3 top-2 text-blue-600" onclick="getCurrentLocation('pickup-later')">
+                                <button class="absolute right-3 top-2 text-green-600" onclick="getCurrentLocation('pickup-later')">
                                     <i class="fas fa-location-arrow"></i>
                                 </button>
                             </div>
@@ -97,21 +97,21 @@
                     <div class="mb-6">
                         <label class="block text-gray-700 font-medium mb-2">Vehicle Type</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div class="vehicle-card p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition duration-300">
+                            <div class="vehicle-card p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-green-500 transition duration-300">
                                 <div class="flex items-center">
                                     <i class="fas fa-car text-blue-500 mr-2"></i>
                                     <span>Standard</span>
                                 </div>
                                 <div class="text-sm text-gray-500 mt-1">$2.50/mile</div>
                             </div>
-                            <div class="vehicle-card p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition duration-300">
+                            <div class="vehicle-card p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-green-500 transition duration-300">
                                 <div class="flex items-center">
                                     <i class="fas fa-car-side text-green-500 mr-2"></i>
                                     <span>Premium</span>
                                 </div>
                                 <div class="text-sm text-gray-500 mt-1">$3.50/mile</div>
                             </div>
-                            <div class="vehicle-card p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition duration-300">
+                            <div class="vehicle-card p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-green-500 transition duration-300">
                                 <div class="flex items-center">
                                     <i class="fas fa-van-shuttle text-purple-500 mr-2"></i>
                                     <span>XL</span>
@@ -125,21 +125,21 @@
                         <label class="block text-gray-700 font-medium mb-2">Payment Method</label>
                         <div class="flex items-center space-x-4">
                             <div class="flex items-center">
-                                <input type="radio" id="cash" name="payment" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <input type="radio" id="cash" name="payment" class="h-4 w-4 text-green-800 focus:ring-green-500">
                                 <label for="cash" class="ml-2 block text-sm text-gray-700">Cash</label>
                             </div>
                             <div class="flex items-center">
-                                <input type="radio" id="card" name="payment" class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                <input type="radio" id="card" name="payment" class="h-4 w-4 text-green-800 focus:ring-green-500" checked>
                                 <label for="card" class="ml-2 block text-sm text-gray-700">Credit Card</label>
                             </div>
                             <div class="flex items-center">
-                                <input type="radio" id="paypal" name="payment" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <input type="radio" id="paypal" name="payment" class="h-4 w-4 text-green-800 focus:ring-green-500">
                                 <label for="paypal" class="ml-2 block text-sm text-gray-700">PayPal</label>
                             </div>
                         </div>
                     </div>
                     
-                    <button class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center">
+                    <button class="w-full py-3 bg-green-800 text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center">
                         <i class="fas fa-taxi mr-2"></i> Confirm Booking
                     </button>
                 </div>
@@ -150,7 +150,7 @@
                     <div class="mt-4 bg-white p-4 rounded-lg shadow">
                         <div class="flex justify-between items-center mb-2">
                             <h3 class="font-medium text-gray-800">Estimated Fare</h3>
-                            <span class="text-xl font-bold text-blue-600">$15.50</span>
+                            <span class="text-xl font-bold text-green-800">$15.50</span>
                         </div>
                         <div class="flex justify-between text-sm text-gray-600">
                             <span>Distance: 3.2 miles</span>
@@ -169,7 +169,7 @@
                 <div>
                     <div class="flex items-center mb-4">
                         <i class="fas fa-taxi text-2xl text-blue-400 mr-2"></i>
-                        <span class="font-bold text-xl">SwiftRide</span>
+                        <span class="font-bold text-xl">TaxiXpress</span>
                     </div>
                     <p class="text-gray-400">Your reliable transportation partner, available 24/7 for all your travel needs.</p>
                     <div class="flex space-x-4 mt-4">
@@ -202,7 +202,7 @@
                     <p class="text-gray-400 mb-4">Subscribe to our newsletter for the latest offers and updates.</p>
                     <div class="flex">
                         <input type="email" placeholder="Your email" class="px-4 py-2 bg-gray-700 text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 transition duration-300">
+                        <button class="px-4 py-2 bg-green-800 text-white rounded-r-lg hover:bg-green-700 transition duration-300">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -216,6 +216,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="/js/book.js"></script>
+    
     <script>
         // Initialize with map
         document.addEventListener('DOMContentLoaded', function() {
@@ -243,7 +244,7 @@
             
             // Add a marker
             const marker = L.marker([40.7128, -74.0060]).addTo(map)
-                .bindPopup('SwiftRide Headquarters')
+                .bindPopup('TaxiXpress Headquarters')
                 .openPopup();
         }
 
@@ -277,7 +278,7 @@
         });
 
         // Add some style for tab active state
-        document.querySelector('#tab-now').classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+        document.querySelector('#tab-now').classList.add('text-green-800', 'border-b-2', 'border-green-600');
     </script>
 </body>
 </html>
