@@ -621,7 +621,7 @@ function displayUserInfo() {
         }
         
         userInfo.innerHTML = `
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between w-64">
                 <div class="flex items-center">
                     <i class="fas fa-user-check text-green-600 mr-3"></i>
                     <div>
