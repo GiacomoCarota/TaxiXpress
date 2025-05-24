@@ -102,21 +102,21 @@
                                     <i class="fas fa-car text-blue-500 mr-2"></i>
                                     <span>Standard</span>
                                 </div>
-                                <div class="text-sm text-gray-500 mt-1">€2.50/mile</div>
+                                <div class="text-sm text-gray-500 mt-1">€2.50/km</div>
                             </div>
                             <div class="vehicle-card p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-green-500 transition duration-300">
                                 <div class="flex items-center">
                                     <i class="fas fa-car-side text-green-500 mr-2"></i>
                                     <span>Premium</span>
                                 </div>
-                                <div class="text-sm text-gray-500 mt-1">€3.50/mile</div>
+                                <div class="text-sm text-gray-500 mt-1">€3.50/km</div>
                             </div>
                             <div class="vehicle-card p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-green-500 transition duration-300">
                                 <div class="flex items-center">
                                     <i class="fas fa-van-shuttle text-purple-500 mr-2"></i>
                                     <span>XL</span>
                                 </div>
-                                <div class="text-sm text-gray-500 mt-1">€4.00/mile</div>
+                                <div class="text-sm text-gray-500 mt-1">€4.00/km</div>
                             </div>
                         </div>
                     </div>
@@ -149,18 +149,47 @@
                     <div id="map" class="h-64 md:h-96 rounded-lg shadow-lg"></div>
                     <div class="mt-4 bg-white p-4 rounded-lg shadow">
                         <div class="flex justify-between items-center mb-2">
-                            <h3 class="font-medium text-gray-800">Estimated Fare</h3>
-                            <span class="text-xl font-bold text-green-800">€15.50</span>
+                            <h3 class="font-medium text-gray-800">Tariffa Stimata</h3>
+                            <span id="estimated-fare" class="text-xl font-bold text-blue-600">€0,00</span>
                         </div>
-                        <div class="flex justify-between text-sm text-gray-600">
-                            <span>Distance: 3.2 miles</span>
-                            <span>Duration: 12 min</span>
+                        <div class="flex justify-between text-sm text-gray-600 mb-2">
+                            <span id="distance-info">Distanza: -- km</span>
+                            <span id="duration-info">Durata: -- min</span>
+                        </div>
+                        <div id="route-details" class="text-xs text-gray-500 hidden">
+                            <div>Tariffa base: €<span id="base-fare">3.50</span></div>
+                            <div>Costo per km: €<span id="per-km-cost">0.00</span></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Loading Modal -->
+    <div id="loading-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-spinner fa-spin text-blue-600 text-2xl mr-3"></i>
+                <span>Calcolo percorso in corso...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg max-w-md mx-4">
+            <div class="text-center">
+                <i class="fas fa-check-circle text-green-500 text-4xl mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Prenotazione Confermata!</h3>
+                <p class="text-gray-600 mb-4">Il tuo taxi è stato prenotato con successo. Riceverai una conferma via email.</p>
+                <div id="booking-summary" class="bg-gray-100 p-3 rounded mb-4 text-left text-sm">
+                    <!-- Booking details will be inserted here -->
+                </div>
+                <button onclick="closeSuccessModal()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Chiudi</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12 px-4">
