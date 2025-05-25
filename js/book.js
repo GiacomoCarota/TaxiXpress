@@ -386,7 +386,7 @@ function checkUserAuthentication() {
         
 
         if (!user) {
-            return null;
+            return false;
         }
         
         // Parsare dati utente
@@ -703,8 +703,114 @@ function showWelcomeToast(userName) {
         }, 300);
     }, 4000);
 }
+// Fix per il z-index della mappa e altri elementi
+function fixMapZIndex() {
+    // Trovare il container della mappa
+    const mapContainer = document.getElementById('map');
+    if (mapContainer) {
+        // Impostare z-index più basso per la mappa
+        mapContainer.style.zIndex = '1';
+        mapContainer.style.position = 'relative';
+    }
+    
+    // Trovare tutti gli elementi leaflet e impostare z-index appropriati
+    const leafletElements = document.querySelectorAll('.leaflet-container, .leaflet-control-container');
+    leafletElements.forEach(element => {
+        element.style.zIndex = '1';
+    });
+    
+    // Assicurarsi che i controlli della mappa abbiano z-index appropriato
+    setTimeout(() => {
+        const leafletControls = document.querySelectorAll('.leaflet-control');
+        leafletControls.forEach(control => {
+            control.style.zIndex = '10';
+        });
+    }, 1000);
+}
+
+function addZIndexStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Fix z-index per mappa */
+        .leaflet-container {
+            z-index: 1 !important;
+        }
+        
+        .leaflet-control-container {
+            z-index: 10 !important;
+        }
+        
+        .leaflet-control {
+            z-index: 10 !important;
+        }
+        
+        /* Header e dropdown */
+        header {
+            z-index: 1000 !important;
+        }
+        
+        #profile-dropdown {
+            z-index: 9999 !important;
+        }
+        
+        /* Modal */
+        #login-required-modal {
+            z-index: 10000 !important;
+        }
+        
+        #success-modal {
+            z-index: 10000 !important;
+        }
+        
+        #loading-modal {
+            z-index: 10000 !important;
+        }
+        
+        /* Marker personalizzati */
+        .marker-pin {
+            width: 30px;
+            height: 30px;
+            border-radius: 50% 50% 50% 0;
+            position: relative;
+            transform: rotate(-45deg);
+            left: 50%;
+            top: 50%;
+            margin: -15px 0 0 -15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .pickup-marker {
+            background: #059669;
+            color: white;
+        }
+        
+        .dropoff-marker {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .marker-pin i {
+            transform: rotate(45deg);
+        }
+        
+        .tab-active {
+            border-bottom: 2px solid #059669 !important;
+            color: #059669 !important;
+        }
+        
+        .input-highlight:focus {
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+    `;
+    document.head.appendChild(style);
+}
 // Inizializzazione quando la pagina è caricata
 document.addEventListener('DOMContentLoaded', function() {
+    // Aggiungere stili per z-index
+    addZIndexStyles();
     // Controllare autenticazione e mostrare info utente
     displayUserInfo();
     
@@ -725,45 +831,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (confirmButton) {
         confirmButton.addEventListener('click', handleBookingConfirmation);
     }
-    
-    // Aggiungere stili CSS per i marker personalizzati
-    const style = document.createElement('style');
-    style.textContent = `
-        .marker-pin {
-            width: 30px;
-            height: 30px;
-            border-radius: 50% 50% 50% 0;
-            position: relative;
-            transform: rotate(-45deg);
-            left: 50%;
-            top: 50%;
-            margin: -15px 0 0 -15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .pickup-marker {
-            background: #059669;
-            color: white;
-        }
-        .dropoff-marker {
-            background: #dc2626;
-            color: white;
-        }
-        .marker-pin i {
-            transform: rotate(45deg);
-        }
-        .tab-active {
-            border-bottom: 2px solid #059669 !important;
-            color: #059669 !important;
-        }
-        .input-highlight:focus {
-            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
-        }
-    `;
-    document.head.appendChild(style);
-    
-    console.log('Sistema di prenotazione inizializzato con successo');
 });
 
 // Funzioni globali per compatibilità con il template HTML
@@ -774,3 +841,5 @@ window.closeLoginRequiredModal = closeLoginRequiredModal;
 window.redirectToLogin = redirectToLogin;
 window.redirectToRegister = redirectToRegister;
 window.logout = logout;
+window.fixMapZIndex = fixMapZIndex;
+window.addZIndexStyles = addZIndexStyles;

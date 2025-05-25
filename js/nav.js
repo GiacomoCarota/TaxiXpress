@@ -1,6 +1,6 @@
 // Gestire la visualizzazione dell'header basata sull'autenticazione
 function updateHeaderForAuth() {
-    const authData = checkUserAuthentication();
+    const authData = checkUserAuthenticationNav();
     const authButtons = document.querySelector('.hidden.md\\:flex.items-center.space-x-4');
     const nav = document.querySelector('nav.hidden.md\\:flex');
     
@@ -104,12 +104,12 @@ function logout() {
         alert('Logout effettuato con successo');
         
         // Opzionale: reindirizzare alla home
-        // window.location.href = '/html/home.html';
+        window.location.href = '/html/home.html';
     }
 }
 
 // Verificare se l'utente è autenticato (versione migliorata)
-function checkUserAuthentication() {
+function checkUserAuthenticationNav() {
     try {
         const user = localStorage.getItem('user');
         
