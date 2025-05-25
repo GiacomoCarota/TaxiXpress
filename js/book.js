@@ -412,9 +412,9 @@ function showLoginRequiredModal() {
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'login-required-modal';
-        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-999';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
         modal.innerHTML = `
-            <div class="bg-white p-6 rounded-lg max-w-md mx-4">
+            <div class="bg-white p-6 rounded-lg max-w-md mx-4 relative">
                 <div class="text-center">
                     <i class="fas fa-user-lock text-red-500 text-4xl mb-4"></i>
                     <h3 class="text-xl font-bold mb-2">Accesso Richiesto</h3>
@@ -436,6 +436,8 @@ function showLoginRequiredModal() {
         document.body.appendChild(modal);
     }
     
+    // Assicurarsi che il modal sia visibile sopra tutto
+    modal.style.zIndex = '9999';
     modal.classList.remove('hidden');
 }
 
@@ -627,6 +629,7 @@ function displayUserInfo() {
                     <div>
                         <div class="font-medium text-green-800">Benvenuto, ${authData.user.nome || authData.user.full_name || 'Utente'}!</div>
                         <div class="text-sm text-green-600">${authData.user.email}</div>
+                        <div class="text-sm text-green-600">${authData.user.phone}</div>
                     </div>
                 </div>
                 <button onclick="logout()" class="text-sm text-gray-500 hover:text-red-600 transition duration-300">

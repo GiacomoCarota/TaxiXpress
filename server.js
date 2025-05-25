@@ -66,7 +66,7 @@ app.post("/login", async (req, res) => {
   try {
     // Query per trovare l'utente
     const users = await sql`
-      SELECT idu, nome, email, password 
+      SELECT * 
       FROM utente 
       WHERE email = ${email.toLowerCase().trim()}
     `;
