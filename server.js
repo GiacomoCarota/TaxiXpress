@@ -31,6 +31,45 @@ app.use("/js", express.static(path.join(__dirname, "js")));
 app.use("/img", express.static(path.join(__dirname, "img")));
 app.use(express.json());
 
+const validateBookingData = (data) => {
+    const requiredFields = [
+        'pickup_address',
+        'dropoff_address',
+        'vehicle_type',
+        'payment_method',
+        'user_id',
+        'user_email',
+        'user_name'
+    ];
+
+    const missingFields = requiredFields.filter(field => !data[field]);
+    
+    if (missingFields.length > 0) {
+        return `Campi obbligatori mancanti: ${missingFields.join(', ')}`;
+    }
+
+    // Validare vehicle_type
+    const validVehicleTypes = ['standard', 'premium', 'xl'];
+    if (!validVehicleTypes.includes(data.vehicle_type)) {
+        return 'Tipo di veicolo non valido';
+    }
+
+    // Validare scheduled booking
+    if (data.is_scheduled) {
+        if (!data.scheduled_date || !data.scheduled_time) {
+            return 'Data e ora sono obbligatorie per prenotazioni programmate';
+        }
+
+        // Verificare che la data sia nel futuro
+        const scheduledDateTime = new Date(`${data.scheduled_date}T${data.scheduled_time}`);
+        if (scheduledDateTime <= new Date()) {
+            return 'Data e ora devono essere nel futuro';
+        }
+    }
+
+    return null;
+};
+
 
 function generateRandomId() {
   return crypto.randomBytes(8).toString("hex").substring(0, 8); // Usa "length" per limitare i caratteri
@@ -39,6 +78,10 @@ function generateRandomId() {
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "html", "home.html"));
 });
+
+
+
+
 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
