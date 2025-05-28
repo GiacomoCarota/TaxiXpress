@@ -775,6 +775,321 @@ app.get("/api/bookings/driver/:driverId", async (req, res) => {
         });
     }
 });
+
+// API per ottenere tutti gli utenti
+app.get("/api/users", async (req, res) => {
+    console.log("📋 Richiesta lista utenti");
+
+    try {
+        const users = await sql`
+            SELECT 
+                idu as id,
+                nome as firstName,
+                cognome as lastName,
+                email,
+                phone,
+                tipo as role,
+                created_at as registrationDate,
+                updated_at as lastLogin
+            FROM users 
+            ORDER BY created_at DESC
+        `;
+
+        console.log(`✅ Trovati ${users.length} utenti`);
+
+        res.json(users);
+
+    } catch (error) {
+        console.error("💥 Errore nel recupero utenti:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per ottenere un singolo utente
+app.get("/api/users/:userId", async (req, res) => {
+    const { userId } = req.params;
+
+    console.log("🔍 Richiesta dettagli utente:", userId);
+
+    try {
+        const users = await sql`
+            SELECT 
+                idu as id,
+                nome as firstName,
+                cognome as lastName,
+                email,
+                phone,
+                tipo as role,
+                created_at as registrationDate,
+                updated_at as lastLogin
+            FROM users 
+            WHERE idu = ${userId}
+        `;
+
+        if (users.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "Utente non trovato"
+            });
+        }
+
+        console.log("✅ Utente trovato:", userId);
+
+        res.json({
+            success: true,
+            data: users[0]
+        });
+
+    } catch (error) {
+        console.error("💥 Errore nel recupero utente:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per aggiornare un utente
+app.put("/api/users/:userId", async (req, res) => {
+    const { userId } = req.params;
+    const { firstName, lastName, email, phone, role } = req.body;
+
+    console.log("🔄 Aggiornamento utente:", { userId, firstName, lastName, email, role });
+
+    // Validazione input
+    if (!firstName || !lastName || !email || !phone || !role) {
+        return res.status(400).json({
+            success: false,
+            error: "Tutti i campi sono obbligatori"
+        });
+    }
+
+    // Validazione formato email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({
+            success: false,
+            error: "Formato email non valido"
+        });
+    }
+
+    // Validazione ruolo
+    const validRoles = ['user', 'driver', 'admin'];
+    if (!validRoles.includes(role)) {
+        return res.status(400).json({
+            success: false,
+            error: "Ruolo non valido"
+        });
+    }
+
+    try {
+        // Verificare che l'utente esista
+        const existingUser = await sql`
+            SELECT idu FROM users WHERE idu = ${userId}
+        `;
+
+        if (existingUser.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "Utente non trovato"
+            });
+        }
+
+        // Verificare che l'email non sia già in uso da un altro utente
+        const emailCheck = await sql`
+            SELECT idu FROM users 
+            WHERE email = ${email.toLowerCase().trim()} AND idu != ${userId}
+        `;
+
+        if (emailCheck.length > 0) {
+            return res.status(409).json({
+                success: false,
+                error: "Email già in uso da un altro utente"
+            });
+        }
+
+        // Aggiornare l'utente
+        await sql`
+            UPDATE users 
+            SET 
+                nome = ${firstName},
+                cognome = ${lastName},
+                email = ${email.toLowerCase().trim()},
+                phone = ${phone},
+                tipo = ${role},
+                updated_at = ${new Date().toISOString()}
+            WHERE idu = ${userId}
+        `;
+
+        console.log("✅ Utente aggiornato con successo:", userId);
+
+        // Recuperare i dati aggiornati
+        const updatedUser = await sql`
+            SELECT 
+                idu as id,
+                nome as firstName,
+                cognome as lastName,
+                email,
+                phone,
+                tipo as role,
+                created_at as registrationDate,
+                updated_at as lastLogin
+            FROM users 
+            WHERE idu = ${userId}
+        `;
+
+        res.json({
+            success: true,
+            message: "Utente aggiornato con successo",
+            data: updatedUser[0]
+        });
+
+    } catch (error) {
+        console.error("💥 Errore aggiornamento utente:", error);
+        
+        // Gestire errori specifici del database
+        if (error.code === '23505') { // Unique constraint violation
+            return res.status(409).json({
+                success: false,
+                error: "Email già in uso"
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per eliminare un utente
+app.delete("/api/users/:userId", async (req, res) => {
+    const { userId } = req.params;
+
+    console.log("🗑️ Richiesta eliminazione utente:", userId);
+
+    try {
+        // Verificare che l'utente esista
+        const existingUser = await sql`
+            SELECT idu, email FROM users WHERE idu = ${userId}
+        `;
+
+        if (existingUser.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "Utente non trovato"
+            });
+        }
+
+        // Verificare se l'utente ha prenotazioni attive
+        const activeBookings = await sql`
+            SELECT booking_id FROM bookings 
+            WHERE user_id = ${userId} AND status IN ('pending', 'confirmed', 'assigned', 'in_progress')
+        `;
+
+        if (activeBookings.length > 0) {
+            return res.status(400).json({
+                success: false,
+                error: "Impossibile eliminare l'utente: ha prenotazioni attive"
+            });
+        }
+
+        // Eliminare l'utente
+        await sql`
+            DELETE FROM users WHERE idu = ${userId}
+        `;
+
+        console.log("✅ Utente eliminato:", existingUser[0].email);
+
+        res.json({
+            success: true,
+            message: "Utente eliminato con successo",
+            user_id: userId
+        });
+
+    } catch (error) {
+        console.error("💥 Errore eliminazione utente:", error);
+        
+        // Gestire errori di foreign key constraint
+        if (error.code === '23503') {
+            return res.status(400).json({
+                success: false,
+                error: "Impossibile eliminare l'utente: esistono dati collegati"
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per cercare utenti con filtri
+app.get("/api/users/search", async (req, res) => {
+    const { search, role, limit = 50, offset = 0 } = req.query;
+
+    console.log("🔍 Ricerca utenti con filtri:", { search, role, limit, offset });
+
+    try {
+        let query = `
+            SELECT 
+                idu as id,
+                nome as firstName,
+                cognome as lastName,
+                email,
+                phone,
+                tipo as role,
+                created_at as registrationDate,
+                updated_at as lastLogin
+            FROM users 
+            WHERE 1=1
+        `;
+        
+        const params = [];
+
+        // Aggiungere filtro di ricerca
+        if (search) {
+            query += ` AND (
+                LOWER(nome) LIKE LOWER($${params.length + 1}) OR 
+                LOWER(cognome) LIKE LOWER($${params.length + 1}) OR 
+                LOWER(email) LIKE LOWER($${params.length + 1}) OR 
+                phone LIKE $${params.length + 1}
+            )`;
+            params.push(`%${search}%`);
+        }
+
+        // Aggiungere filtro ruolo
+        if (role) {
+            query += ` AND tipo = $${params.length + 1}`;
+            params.push(role);
+        }
+
+        query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+        params.push(parseInt(limit), parseInt(offset));
+
+        const users = await sql.unsafe(query, params);
+
+        console.log(`✅ Trovati ${users.length} utenti con i filtri applicati`);
+
+        res.json({
+            success: true,
+            data: users,
+            count: users.length
+        });
+
+    } catch (error) {
+        console.error("💥 Errore ricerca utenti:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
 // Avvia il server
 app.listen(port, () => {
     console.log(`Server avviato su http://localhost:${port}`); 

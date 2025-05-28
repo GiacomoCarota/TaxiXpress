@@ -79,13 +79,21 @@ function updateMainNavigation(userType) {
             <a href="/html/myrequest.html" class="${currentPage === 'myrequest.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Dashboard Driver</a>
             <a href="/html/contact.html" class="${currentPage === 'contact.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Contact</a>
         `;
-    } else if (userType === 'cliente' || userType === 'cliente') {
+    } else if (userType === 'cliente') {
         // Navigazione per clienti
         navLinks = `
             <a href="/html/home.html" class="${currentPage === 'home.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Home</a>
             <a href="/html/book.html" class="${currentPage === 'book.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Book Ride</a>
             <a href="/html/mybookings.html" class="${currentPage === 'mybookings.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">My Bookings</a>
             <a href="/html/pricing.html" class="${currentPage === 'pricing.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Pricing</a>
+            <a href="/html/contact.html" class="${currentPage === 'contact.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Contact</a>
+        `;
+    }else if (userType === 'admin') {
+        // Navigazione per admin
+        navLinks = `
+            <a href="/html/home.html" class="${currentPage === 'home.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Home</a>
+            <a href="/html/manage-promo.html" class="${currentPage === 'manage-promo.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Manage Promos</a>
+            <a href="/html/manage-users.html" class="${currentPage === 'manage-users.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Manage Users</a>
             <a href="/html/contact.html" class="${currentPage === 'contact.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Contact</a>
         `;
     } else {
