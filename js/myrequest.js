@@ -1,4 +1,4 @@
-let driverStatus = "offline";
+let driverStatus = localStorage.getItem("driverStatus") || "offline"; // Fix: get instead of set
 let rideRequests = [];
 let activeRides = [];
 let currentDriver = JSON.parse(localStorage.getItem("user"))
@@ -30,7 +30,6 @@ function checkDriverAuth() {
   }
 
   currentDriver = user.user;
-
   // Update greeting
   const greeting = document.getElementById("userGreeting");
   if (greeting) {
@@ -39,7 +38,12 @@ function checkDriverAuth() {
 }
 
 function toggleDriverStatus() {
+  // Toggle status
   driverStatus = driverStatus === "online" ? "offline" : "online";
+  
+  // Save to localStorage
+  localStorage.setItem("driverStatus", driverStatus);
+  
   updateStatusDisplay();
 
   if (driverStatus === "online") {
@@ -71,35 +75,43 @@ function updateStatusDisplay() {
 
 async function loadDriverData() {
   try {
-    // Carica statistiche del driver dalle prenotazioni completate
-    const response = await fetch(
-      `/api/bookings/driver/${currentDriver.idu}?status=completed`
-    );
+    // Carica TUTTE le prenotazioni del driver
+    const response = await fetch(`/api/bookings/driver/${currentDriver.idu}`);
     const data = await response.json();
 
     if (data.success) {
-      const completedRides = data.data;
+      const allBookings = data.data;
+      
+      // Filtra solo le corse COMPLETATE
+      const completedRides = allBookings.filter(booking => booking.status === 'completed');
+      
       const today = new Date().toDateString();
 
-      // Filtra corse di oggi
-      const todayRides = completedRides.filter(
+      // Filtra corse completate di oggi
+      const todayCompletedRides = completedRides.filter(
         (ride) => new Date(ride.updated_at).toDateString() === today
       );
 
-      // Calcola guadagno di oggi
-      const todayEarnings = todayRides.reduce(
+      // Calcola guadagno di oggi dalle corse completate
+      const todayEarnings = todayCompletedRides.reduce(
         (sum, ride) => sum + parseFloat(ride.estimated_fare || 0),
         0
       );
 
       // Aggiorna statistiche
-      document.getElementById("todayRides").textContent = todayRides.length;
-      document.getElementById(
-        "todayEarnings"
-      ).textContent = `€${todayEarnings.toFixed(2)}`;
+      document.getElementById("todayRides").textContent = todayCompletedRides.length;
+      document.getElementById("todayEarnings").textContent = `€${todayEarnings.toFixed(2)}`;
 
       // Rating fisso per ora (potresti implementare un sistema di rating)
       document.getElementById("averageRating").textContent = "5.0";
+
+      console.log("Statistiche aggiornate:", {
+        totalePrenotazioni: allBookings.length,
+        corseCompletate: completedRides.length,
+        corseOggi: todayCompletedRides.length,
+        guadagnoOggi: todayEarnings
+      });
+      
     }
   } catch (error) {
     console.error("Errore nel caricamento dati driver:", error);
@@ -166,7 +178,7 @@ async function loadRideRequests() {
 async function loadActiveRides() {
   try {
     const response = await fetch(
-      `/api/bookings/driver/${currentDriver.idu}?status=assigned`
+      `/api/bookings/driver/${currentDriver.idu}?status=assigned,in_progress`
     );
     const data = await response.json();
 
@@ -358,12 +370,14 @@ function displayActiveRides() {
   container.innerHTML = activeRides
     .map(
       (ride) => `
-                <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-green-500">
+                <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 ${ride.status === 'in_progress' ? 'border-blue-500' : 'border-green-500'}">
                     <div class="flex justify-between items-start mb-4">
                         <div class="flex-1">
                             <h3 class="text-lg font-semibold text-gray-800 mb-2">
                                 <i class="fas fa-user mr-2"></i>${ride.customer}
-                                <span class="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Assegnata</span>
+                                <span class="ml-2 px-2 py-1 ${ride.status === 'in_progress' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'} text-xs rounded-full">
+                                    ${ride.status === 'in_progress' ? 'In Corso' : 'Assegnata'}
+                                </span>
                             </h3>
                             <div class="space-y-2 text-gray-600">
                                 <div class="flex items-start">
@@ -404,14 +418,23 @@ function displayActiveRides() {
                     </div>
                     
                     <div class="flex space-x-3">
-                        <button onclick="startRide('${ride.id}')" 
-                                class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
-                            <i class="fas fa-play mr-2"></i>Inizia Corsa
-                        </button>
-                        <button onclick="completeRide('${ride.id}')" 
-                                class="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300">
-                            <i class="fas fa-check-circle mr-2"></i>Completa
-                        </button>
+                        ${ride.status === 'in_progress' ? 
+                            // Se la corsa è in corso, mostra solo il bottone Completa
+                            `<button onclick="completeRide('${ride.id}')" 
+                                    class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300">
+                                <i class="fas fa-check-circle mr-2"></i>Completa Corsa
+                            </button>` 
+                            :
+                            // Se la corsa è solo assegnata, mostra entrambi i bottoni
+                            `<button onclick="startRide('${ride.id}')" 
+                                    class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
+                                <i class="fas fa-play mr-2"></i>Inizia Corsa
+                            </button>
+                            <button onclick="completeRide('${ride.id}')" 
+                                    class="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300">
+                                <i class="fas fa-check-circle mr-2"></i>Completa
+                            </button>`
+                        }
                     </div>
                 </div>
             `
@@ -428,6 +451,7 @@ async function startRide(bookingId) {
       },
       body: JSON.stringify({
         status: "in_progress",
+        driver_id: currentDriver.idu,
       }),
     });
 
@@ -480,6 +504,7 @@ async function completeRide(bookingId) {
 function logout() {
   if (confirm("Sei sicuro di voler uscire?")) {
     localStorage.removeItem("user");
+    localStorage.removeItem("driverStatus"); // Pulisci anche lo stato del driver
     window.location.href = "/html/home.html";
   }
 }

@@ -5,6 +5,7 @@ let dropoffMarker;
 let routeControl;
 let currentRoute = null;
 
+
 // Tariffe per tipo di veicolo
 const vehicleRates = {
     standard: { perKm: 2.50, baseFare: 3.50 },

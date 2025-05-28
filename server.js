@@ -128,7 +128,7 @@ app.post("/login", async (req, res) => {
     // Query per trovare l'utente
     const users = await sql`
       SELECT * 
-      FROM utente 
+      FROM users 
       WHERE email = ${email.toLowerCase().trim()}
     `;
     
@@ -194,7 +194,7 @@ app.post("/signup", async (req, res) => {
   try {
     
     // Controlla se l'utente esiste già
-    const userCheck = await sql`SELECT * FROM utente WHERE email = ${email}`;
+    const userCheck = await sql`SELECT * FROM users WHERE email = ${email}`;
     console.log(userCheck);
     if (userCheck.length > 0) {
       return res.status(409).json({ error: "Email già registrata" });
@@ -203,7 +203,7 @@ app.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Inserisci il nuovo utente nel database
-    await sql`INSERT INTO utente (nome, cognome, email, password, tipo, phone) VALUES (${name}, ${surname}, ${email}, ${hashedPassword},${tipo}, ${phone})`;
+    await sql`INSERT INTO users (nome, cognome, email, password, tipo, phone) VALUES (${name}, ${surname}, ${email}, ${hashedPassword},${tipo}, ${phone})`;
 
     res.status(201).json({ message: "Registrazione effettuata con successo" });
   } catch (error) {
@@ -249,7 +249,7 @@ app.post("/api/bookings", async (req, res) => {
         // Verificare che l'utente esista
         const userCheck = await sql`
             SELECT idu, nome, email, phone 
-            FROM utente 
+            FROM users 
             WHERE idu = ${user_id} AND email = ${user_email}
         `;
 
@@ -488,25 +488,7 @@ app.get("/api/bookings/:bookingId", async (req, res) => {
     try {
         const bookings = await sql`
             SELECT 
-                booking_id,
-                user_id,
-                user_email,
-                user_name,
-                user_phone,
-                pickup_address,
-                dropoff_address,
-                vehicle_type,
-                payment_method,
-                distance,
-                duration,
-                estimated_fare,
-                is_scheduled,
-                scheduled_datetime,
-                scheduled_date,
-                scheduled_time,
-                status,
-                created_at,
-                updated_at
+                *
             FROM bookings 
             WHERE booking_id = ${bookingId}
         `;
@@ -537,9 +519,9 @@ app.get("/api/bookings/:bookingId", async (req, res) => {
 // API per aggiornare lo stato di una prenotazione
 app.put("/api/bookings/:bookingId/status", async (req, res) => {
     const { bookingId } = req.params;
-    const { status, driver_id, driver_name } = req.body;
+    const { status, driver_id } = req.body;
 
-    console.log("🔄 Aggiornamento status prenotazione:", { bookingId, status });
+    console.log("🔄 Aggiornamento status prenotazione:", { bookingId, status, driver_id });
 
     const validStatuses = ['pending', 'confirmed', 'assigned', 'in_progress', 'completed', 'cancelled'];
     
@@ -553,7 +535,7 @@ app.put("/api/bookings/:bookingId/status", async (req, res) => {
     try {
         // Verificare che la prenotazione esista
         const existingBooking = await sql`
-            SELECT booking_id, status FROM bookings WHERE booking_id = ${bookingId}
+            SELECT booking_id, status, driver_id FROM bookings WHERE booking_id = ${bookingId}
         `;
 
         if (existingBooking.length === 0) {
@@ -566,7 +548,7 @@ app.put("/api/bookings/:bookingId/status", async (req, res) => {
         // Preparare i dati per l'aggiornamento
         const updateData = {
             status,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
         };
 
         // Aggiungere dati del driver se forniti
@@ -579,12 +561,12 @@ app.put("/api/bookings/:bookingId/status", async (req, res) => {
             UPDATE bookings 
             SET 
                 status = ${updateData.status},
-                driver_id = ${updateData.driver_id || null},
+                driver_id = ${updateData.driver_id},
                 updated_at = ${updateData.updated_at}
             WHERE booking_id = ${bookingId}
         `;
 
-        console.log("✅ Status prenotazione aggiornato:", { bookingId, status });
+        console.log("✅ Status prenotazione aggiornato:", { bookingId, status, driver_id });
 
         res.json({
             success: true,
@@ -711,7 +693,7 @@ app.put("/api/bookings/:bookingId/assign", async (req, res) => {
     try {
         // Verificare che la prenotazione esista e sia in stato pending
         const existingBooking = await sql`
-            SELECT booking_id, status, user_name 
+            SELECT booking_id, status
             FROM bookings 
             WHERE booking_id = ${bookingId}
         `;
@@ -771,53 +753,15 @@ app.get("/api/bookings/driver/:driverId", async (req, res) => {
     console.log("👨‍💼 Richiesta prenotazioni per driver:", driverId);
 
     try {
-        let query;
-        
-        if (status) {
+        let query;       
             query = sql`
                 SELECT 
-                    booking_id,
-                    user_name,
-                    user_phone,
-                    pickup_address,
-                    dropoff_address,
-                    vehicle_type,
-                    payment_method,
-                    distance,
-                    duration,
-                    estimated_fare,
-                    is_scheduled,
-                    scheduled_datetime,
-                    status,
-                    created_at,
-                    updated_at
-                FROM bookings 
-                WHERE driver_id = ${driverId} AND status = ${status}
-                ORDER BY updated_at DESC
-            `;
-        } else {
-            query = sql`
-                SELECT 
-                    booking_id,
-                    user_name,
-                    user_phone,
-                    pickup_address,
-                    dropoff_address,
-                    vehicle_type,
-                    payment_method,
-                    distance,
-                    duration,
-                    estimated_fare,
-                    is_scheduled,
-                    scheduled_datetime,
-                    status,
-                    created_at,
-                    updated_at
+                    *
                 FROM bookings 
                 WHERE driver_id = ${driverId}
                 ORDER BY updated_at DESC
             `;
-        }
+        
 
         const driverBookings = await query;
 
@@ -839,5 +783,5 @@ app.get("/api/bookings/driver/:driverId", async (req, res) => {
 });
 // Avvia il server
 app.listen(port, () => {
-  console.log(`Server avviato su http://localhost:${port}`); 
+    console.log(`Server avviato su http://localhost:${port}`); 
 });
