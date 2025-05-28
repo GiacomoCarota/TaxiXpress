@@ -572,7 +572,6 @@ app.put("/api/bookings/:bookingId/status", async (req, res) => {
         // Aggiungere dati del driver se forniti
         if (driver_id && driver_name) {
             updateData.driver_id = driver_id;
-            updateData.driver_name = driver_name;
         }
 
         // Aggiornare la prenotazione
@@ -581,7 +580,6 @@ app.put("/api/bookings/:bookingId/status", async (req, res) => {
             SET 
                 status = ${updateData.status},
                 driver_id = ${updateData.driver_id || null},
-                driver_name = ${updateData.driver_name || null},
                 updated_at = ${updateData.updated_at}
             WHERE booking_id = ${bookingId}
         `;
@@ -659,6 +657,180 @@ app.delete("/api/bookings/:bookingId", async (req, res) => {
 
     } catch (error) {
         console.error("💥 Errore cancellazione prenotazione:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per ottenere tutte le prenotazioni pending (per i driver)
+app.get("/api/booking/pending", async (req, res) => {
+    console.log("🚗 Richiesta prenotazioni pending per dashboard driver");
+
+    try {
+        const pendingBookings = await sql`
+            SELECT 
+                *
+            FROM bookings 
+            WHERE status = 'pending'
+            ORDER BY created_at ASC
+        `;
+
+        console.log(`✅ Trovate ${pendingBookings.length} prenotazioni pending`);
+
+        res.json({
+            success: true,
+            data: pendingBookings,
+            count: pendingBookings.length
+        });
+
+    } catch (error) {
+        console.error("💥 Errore nel recupero prenotazioni pending:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per assegnare una prenotazione a un driver
+app.put("/api/bookings/:bookingId/assign", async (req, res) => {
+    const { bookingId } = req.params;
+    const { driver_id, driver_name, driver_phone } = req.body;
+
+    console.log("👨‍💼 Assegnazione prenotazione a driver:", { bookingId, driver_id, driver_name });
+
+    if (!driver_id || !driver_name) {
+        return res.status(400).json({
+            success: false,
+            error: "ID driver e nome driver sono obbligatori"
+        });
+    }
+
+    try {
+        // Verificare che la prenotazione esista e sia in stato pending
+        const existingBooking = await sql`
+            SELECT booking_id, status, user_name 
+            FROM bookings 
+            WHERE booking_id = ${bookingId}
+        `;
+
+        if (existingBooking.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "Prenotazione non trovata"
+            });
+        }
+
+        if (existingBooking[0].status !== 'pending') {
+            return res.status(400).json({
+                success: false,
+                error: "La prenotazione non è più disponibile"
+            });
+        }
+
+        // Assegnare il driver e cambiare lo status
+        await sql`
+            UPDATE bookings 
+            SET 
+                status = 'assigned',
+                driver_id = ${driver_id},
+                updated_at = ${new Date().toISOString()}
+            WHERE booking_id = ${bookingId}
+        `;
+
+        console.log("✅ Prenotazione assegnata al driver:", { bookingId, driver_name });
+
+        res.json({
+            success: true,
+            message: "Prenotazione assegnata con successo",
+            data: {
+                booking_id: bookingId,
+                driver_id,
+                driver_name,
+                customer: existingBooking[0].user_name,
+                status: 'assigned'
+            }
+        });
+
+    } catch (error) {
+        console.error("💥 Errore assegnazione prenotazione:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per ottenere le prenotazioni assegnate a un driver specifico
+app.get("/api/bookings/driver/:driverId", async (req, res) => {
+    const { driverId } = req.params;
+    const { status } = req.query;
+
+    console.log("👨‍💼 Richiesta prenotazioni per driver:", driverId);
+
+    try {
+        let query;
+        
+        if (status) {
+            query = sql`
+                SELECT 
+                    booking_id,
+                    user_name,
+                    user_phone,
+                    pickup_address,
+                    dropoff_address,
+                    vehicle_type,
+                    payment_method,
+                    distance,
+                    duration,
+                    estimated_fare,
+                    is_scheduled,
+                    scheduled_datetime,
+                    status,
+                    created_at,
+                    updated_at
+                FROM bookings 
+                WHERE driver_id = ${driverId} AND status = ${status}
+                ORDER BY updated_at DESC
+            `;
+        } else {
+            query = sql`
+                SELECT 
+                    booking_id,
+                    user_name,
+                    user_phone,
+                    pickup_address,
+                    dropoff_address,
+                    vehicle_type,
+                    payment_method,
+                    distance,
+                    duration,
+                    estimated_fare,
+                    is_scheduled,
+                    scheduled_datetime,
+                    status,
+                    created_at,
+                    updated_at
+                FROM bookings 
+                WHERE driver_id = ${driverId}
+                ORDER BY updated_at DESC
+            `;
+        }
+
+        const driverBookings = await query;
+
+        console.log(`✅ Trovate ${driverBookings.length} prenotazioni per driver ${driverId}`);
+
+        res.json({
+            success: true,
+            data: driverBookings,
+            count: driverBookings.length
+        });
+
+    } catch (error) {
+        console.error("💥 Errore nel recupero prenotazioni driver:", error);
         res.status(500).json({
             success: false,
             error: "Errore interno del server"
