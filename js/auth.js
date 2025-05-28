@@ -1,26 +1,30 @@
-document.getElementById("login-form").addEventListener("submit", function (event) {
-    event.preventDefault(); // 🔒 Blocca il submit classico
-    login(); // tua funzione async
+document
+  .getElementById("login-form")
+  ?.addEventListener("submit", function (event) {
+    event.preventDefault();
+    login();
   });
 
-document.getElementById("register-form").addEventListener("submit", function (event) {
-    event.preventDefault(); // 🔒 Blocca il submit classico
-    Signup(); // tua funzione async
-  });// Funzione per il login
+document
+  .getElementById("register-form")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+    Signup();
+  });
+
+// Funzione per il login
 async function login() {
-const email = document.getElementById("login-email").value.trim();
-const password = document.getElementById("login-password").value;
+  const email = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value;
 
-console.log("🚀 Invio login con:", { email, password });
+  console.log("🚀 Invio login con:", { email, password });
 
-let response;
-try {
+  let response;
+  try {
     response = await fetch("/login", {
-
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
   } catch (err) {
     console.error("❌ Fetch fallita:", err);
@@ -47,33 +51,55 @@ try {
   }
 }
 
-//funzione signup
+// Funzione signup aggiornata con tipo utente
 async function Signup() {
-  const name = document.getElementById("first-name").value;
-  const surname = document.getElementById("last-name").value;
-  const email = document.getElementById("register-email").value;
+  const name = document.getElementById("first-name").value.trim();
+  const surname = document.getElementById("last-name").value.trim();
+  const email = document.getElementById("register-email").value.trim();
   const password = document.getElementById("register-password").value;
   const confirmpassword = document.getElementById("confirm-password").value;
-  const phone = document.getElementById("phone").value;
-  if (password != confirmpassword) alert("Le due password non coincidono");
-  else {
-    try {
-      const response = await fetch("/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, surname, email, password, phone }),
-      });
+  const phone = document.getElementById("phone").value.trim();
+  const userType = document.getElementById("user-type").value;
 
-      if (response.ok) {
-        alert("Registrazione effettuata con successo! Ora effettua il login.");
-        window.location.href = "/html/login.html";
-      } else {
-        const errorData = await response.json();
-        alert(errorData.error || "Errore durante la registrazione");
-      }
-    } catch (error) {
-      console.error("Errore durante la registrazione:", error.message);
-      alert("Errore del server");
+  // Validazioni
+  if (!userType) {
+    alert("Seleziona il tipo di account (Cliente o Driver)");
+    return;
+  }
+
+  if (!name || !surname || !email || !password || !phone) {
+    alert("Compila tutti i campi obbligatori");
+    return;
+  }
+
+  if (password !== confirmpassword) {
+    alert("Le due password non coincidono");
+    return;
+  }
+
+  try {
+    const response = await fetch("/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        surname,
+        email,
+        password,
+        phone,
+        tipo: userType,
+      }),
+    });
+
+    if (response.ok) {
+      alert("Registrazione effettuata con successo! Ora effettua il login.");
+      window.location.href = "/html/login.html";
+    } else {
+      const errorData = await response.json();
+      alert(errorData.error || "Errore durante la registrazione");
     }
+  } catch (error) {
+    console.error("Errore durante la registrazione:", error.message);
+    alert("Errore del server");
   }
 }
