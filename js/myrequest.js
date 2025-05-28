@@ -1,7 +1,8 @@
 let driverStatus = "offline";
 let rideRequests = [];
 let activeRides = [];
-let currentDriver = null;
+let currentDriver = JSON.parse(localStorage.getItem("user"))
+
 
 // Initialize page
 document.addEventListener("DOMContentLoaded", function () {
@@ -9,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
   loadDriverData();
   updateStatusDisplay();
   loadRideRequests();
+  console.log(currentDriver)
 
   // Auto refresh every 30 seconds when online
   setInterval(() => {
@@ -453,6 +455,7 @@ async function completeRide(bookingId) {
         },
         body: JSON.stringify({
           status: "completed",
+          driver_id: currentDriver.idu
         }),
       });
 

@@ -570,7 +570,7 @@ app.put("/api/bookings/:bookingId/status", async (req, res) => {
         };
 
         // Aggiungere dati del driver se forniti
-        if (driver_id && driver_name) {
+        if (driver_id) {
             updateData.driver_id = driver_id;
         }
 

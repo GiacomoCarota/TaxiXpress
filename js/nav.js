@@ -3,7 +3,7 @@ function updateHeaderForAuth() {
     const authData = checkUserAuthenticationNav();
     const authButtons = document.querySelector('.hidden.md\\:flex.items-center.space-x-4');
     const nav = document.querySelector('nav.hidden.md\\:flex');
-    
+
     if (authData && authButtons) {
         // Utente loggato - sostituire i pulsanti con il profilo
         authButtons.innerHTML = `
@@ -79,7 +79,7 @@ function updateMainNavigation(userType) {
             <a href="/html/myrequest.html" class="${currentPage === 'myrequest.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Dashboard Driver</a>
             <a href="/html/contact.html" class="${currentPage === 'contact.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Contact</a>
         `;
-    } else if (userType === 'customer' || userType === 'cliente') {
+    } else if (userType === 'cliente' || userType === 'cliente') {
         // Navigazione per clienti
         navLinks = `
             <a href="/html/home.html" class="${currentPage === 'home.html' ? 'text-green-800 font-medium' : 'text-gray-600 hover:text-green-600 transition duration-300'}">Home</a>
@@ -219,7 +219,7 @@ function protectDriverPage() {
 
 // Funzione per proteggere le pagine customer
 function protectCustomerPage() {
-    return checkUserAccess('customer') || checkUserAccess('cliente');
+    return checkUserAccess('cliente');
 }
 
 // Aggiornare l'inizializzazione per includere l'aggiornamento dell'header
