@@ -5,6 +5,10 @@ let dropoffMarker;
 let routeControl;
 let currentRoute = null;
 
+// Variabili globali per autocompletamento
+let currentSuggestions = [];
+let activeSuggestionIndex = -1;
+let currentInputElement = null;
 
 // Tariffe per tipo di veicolo
 const vehicleRates = {
@@ -584,25 +588,6 @@ function hideLoadingModal() {
     document.getElementById('loading-modal').classList.add('hidden');
 }
 
-// Event listeners per input degli indirizzi
-function setupAddressInputs() {
-    const inputs = ['pickup-now', 'dropoff-now', 'pickup-later', 'dropoff-later'];
-    
-    inputs.forEach(inputId => {
-        const input = document.getElementById(inputId);
-        if (input) {
-            // Debounce per evitare troppe chiamate API
-            let timeout;
-            input.addEventListener('input', () => {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                    calculateRoute();
-                }, 1000); // Aspetta 1 secondo dopo che l'utente smette di digitare
-            });
-        }
-    });
-}
-
 // Mostrare informazioni utente se loggato
 function displayUserInfo() {
     const authData = checkUserAuthentication();
@@ -808,6 +793,306 @@ function addZIndexStyles() {
     `;
     document.head.appendChild(style);
 }
+// Funzione per ottenere suggerimenti da Nominatim
+async function getAddressSuggestions(query, limit = 5) {
+    if (query.length < 3) return [];
+    
+    try {
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=${limit}&countrycodes=it&addressdetails=1`
+        );
+        const data = await response.json();
+        
+        return data.map(item => ({
+            display_name: item.display_name,
+            lat: parseFloat(item.lat),
+            lng: parseFloat(item.lon),
+            address: {
+                road: item.address?.road || '',
+                house_number: item.address?.house_number || '',
+                city: item.address?.city || item.address?.town || item.address?.village || '',
+                postcode: item.address?.postcode || ''
+            }
+        }));
+    } catch (error) {
+        console.error('Errore nel recupero suggerimenti:', error);
+        return [];
+    }
+}
+
+// Creare dropdown dei suggerimenti
+function createSuggestionsDropdown(inputElement) {
+    // Rimuovere dropdown esistente
+    removeSuggestionsDropdown();
+    
+    const dropdown = document.createElement('div');
+    dropdown.id = 'address-suggestions';
+    dropdown.className = 'absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-b-lg shadow-lg z-50 max-h-60 overflow-y-auto';
+    dropdown.style.display = 'none';
+    
+    // Posizionare il dropdown relativo all'input
+    const inputContainer = inputElement.parentElement;
+    inputContainer.style.position = 'relative';
+    inputContainer.appendChild(dropdown);
+    
+    return dropdown;
+}
+
+// Mostrare suggerimenti nel dropdown
+function showSuggestions(suggestions, inputElement) {
+    let dropdown = document.getElementById('address-suggestions');
+    
+    if (!dropdown) {
+        dropdown = createSuggestionsDropdown(inputElement);
+    }
+    
+    // Svuotare contenuto precedente
+    dropdown.innerHTML = '';
+    
+    if (suggestions.length === 0) {
+        dropdown.style.display = 'none';
+        return;
+    }
+    
+    suggestions.forEach((suggestion, index) => {
+        const item = document.createElement('div');
+        item.className = 'px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0 suggestion-item';
+        item.dataset.index = index;
+        
+        // Formattare il testo del suggerimento
+        const roadInfo = suggestion.address.road && suggestion.address.house_number 
+            ? `${suggestion.address.road} ${suggestion.address.house_number}` 
+            : suggestion.address.road || '';
+        
+        const cityInfo = suggestion.address.city 
+            ? `${suggestion.address.city}${suggestion.address.postcode ? ' (' + suggestion.address.postcode + ')' : ''}` 
+            : '';
+        
+        item.innerHTML = `
+            <div class="font-medium text-gray-800">${roadInfo || suggestion.display_name.split(',')[0]}</div>
+            <div class="text-sm text-gray-500">${cityInfo || suggestion.display_name}</div>
+        `;
+        
+        // Event listener per selezione
+        item.addEventListener('click', () => selectSuggestion(index, inputElement));
+        item.addEventListener('mouseenter', () => setActiveSuggestion(index));
+        
+        dropdown.appendChild(item);
+    });
+    
+    dropdown.style.display = 'block';
+    currentSuggestions = suggestions;
+    activeSuggestionIndex = -1;
+}
+
+// Nascondere dropdown dei suggerimenti
+function hideSuggestions() {
+    const dropdown = document.getElementById('address-suggestions');
+    if (dropdown) {
+        dropdown.style.display = 'none';
+    }
+    currentSuggestions = [];
+    activeSuggestionIndex = -1;
+}
+
+// Rimuovere dropdown dei suggerimenti
+function removeSuggestionsDropdown() {
+    const dropdown = document.getElementById('address-suggestions');
+    if (dropdown) {
+        dropdown.remove();
+    }
+}
+
+// Selezionare un suggerimento
+function selectSuggestion(index, inputElement) {
+    if (!currentSuggestions[index]) return;
+    
+    const suggestion = currentSuggestions[index];
+    
+    // Impostare valore nell'input
+    inputElement.value = suggestion.display_name;
+    
+    // Aggiornare marker se necessario
+    if (inputElement.id.includes('pickup')) {
+        updatePickupMarker(suggestion.lat, suggestion.lng);
+    } else if (inputElement.id.includes('dropoff')) {
+        updateDropoffMarker(suggestion.lat, suggestion.lng);
+    }
+    
+    // Nascondere suggerimenti
+    hideSuggestions();
+    
+    // Calcolare percorso
+    setTimeout(() => calculateRoute(), 100);
+}
+
+// Impostare suggerimento attivo (per navigazione con tastiera)
+function setActiveSuggestion(index) {
+    const items = document.querySelectorAll('.suggestion-item');
+    
+    // Rimuovere classe active da tutti gli elementi
+    items.forEach(item => item.classList.remove('bg-blue-100'));
+    
+    // Aggiungere classe active all'elemento corrente
+    if (items[index]) {
+        items[index].classList.add('bg-blue-100');
+        activeSuggestionIndex = index;
+    }
+}
+
+// Gestire navigazione con tastiera
+function handleKeyboardNavigation(event, inputElement) {
+    const dropdown = document.getElementById('address-suggestions');
+    
+    if (!dropdown || dropdown.style.display === 'none') return;
+    
+    switch (event.key) {
+        case 'ArrowDown':
+            event.preventDefault();
+            const nextIndex = activeSuggestionIndex < currentSuggestions.length - 1 
+                ? activeSuggestionIndex + 1 
+                : 0;
+            setActiveSuggestion(nextIndex);
+            break;
+            
+        case 'ArrowUp':
+            event.preventDefault();
+            const prevIndex = activeSuggestionIndex > 0 
+                ? activeSuggestionIndex - 1 
+                : currentSuggestions.length - 1;
+            setActiveSuggestion(prevIndex);
+            break;
+            
+        case 'Enter':
+            event.preventDefault();
+            if (activeSuggestionIndex >= 0) {
+                selectSuggestion(activeSuggestionIndex, inputElement);
+            }
+            break;
+            
+        case 'Escape':
+            event.preventDefault();
+            hideSuggestions();
+            inputElement.blur();
+            break;
+    }
+}
+
+// Funzione di debounce per le chiamate API
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Gestire input con autocompletamento
+const handleAddressInput = debounce(async (inputElement) => {
+    const query = inputElement.value.trim();
+    
+    if (query.length < 3) {
+        hideSuggestions();
+        return;
+    }
+    
+    try {
+        const suggestions = await getAddressSuggestions(query);
+        showSuggestions(suggestions, inputElement);
+    } catch (error) {
+        console.error('Errore autocompletamento:', error);
+        hideSuggestions();
+    }
+}, 300);
+
+// Modificare la funzione setupAddressInputs esistente
+function setupAddressInputs() {
+    const inputs = ['pickup-now', 'dropoff-now', 'pickup-later', 'dropoff-later'];
+    
+    inputs.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        if (input) {
+            // Rimuovere event listener precedenti se esistono
+            input.removeEventListener('input', input._handleInput);
+            input.removeEventListener('keydown', input._handleKeydown);
+            input.removeEventListener('focus', input._handleFocus);
+            input.removeEventListener('blur', input._handleBlur);
+            
+            // Definire handler
+            input._handleInput = () => handleAddressInput(input);
+            input._handleKeydown = (event) => handleKeyboardNavigation(event, input);
+            input._handleFocus = () => {
+                currentInputElement = input;
+                if (input.value.length >= 3) {
+                    handleAddressInput(input);
+                }
+            };
+            input._handleBlur = () => {
+                // Ritardare per permettere il click sui suggerimenti
+                setTimeout(() => {
+                    if (currentInputElement === input) {
+                        hideSuggestions();
+                        currentInputElement = null;
+                    }
+                }, 200);
+            };
+            
+            // Aggiungere event listeners
+            input.addEventListener('input', input._handleInput);
+            input.addEventListener('keydown', input._handleKeydown);
+            input.addEventListener('focus', input._handleFocus);
+            input.addEventListener('blur', input._handleBlur);
+        }
+    });
+}
+
+// Aggiungere stili CSS per il dropdown
+function addAutocompleteStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        #address-suggestions {
+            z-index: 1000 !important;
+        }
+        
+        .suggestion-item:hover {
+            background-color: #f3f4f6 !important;
+        }
+        
+        .suggestion-item.bg-blue-100 {
+            background-color: #dbeafe !important;
+        }
+        
+        /* Assicurarsi che il container input sia relativo */
+        .relative {
+            position: relative;
+        }
+        
+        /* Stile per evidenziare il testo corrispondente */
+        .highlight {
+            font-weight: bold;
+            color: #059669;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Gestire click fuori dal dropdown per chiuderlo
+function handleClickOutside() {
+    document.addEventListener('click', (event) => {
+        const dropdown = document.getElementById('address-suggestions');
+        const isInputClick = event.target.closest('input[id*="pickup"], input[id*="dropoff"]');
+        const isDropdownClick = event.target.closest('#address-suggestions');
+        
+        if (!isInputClick && !isDropdownClick && dropdown) {
+            hideSuggestions();
+            currentInputElement = null;
+        }
+    });
+}
 // Inizializzazione quando la pagina è caricata
 document.addEventListener('DOMContentLoaded', function() {
     // Aggiungere stili per z-index
@@ -826,6 +1111,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Setup input degli indirizzi
     setupAddressInputs();
+
+    addAutocompleteStyles();
+    handleClickOutside();
     
     // Event listener per il pulsante di conferma
     const confirmButton = document.querySelector('button[class*="bg-green-800"]');

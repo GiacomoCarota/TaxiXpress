@@ -297,9 +297,6 @@ app.post("/api/bookings", async (req, res) => {
             INSERT INTO bookings (
                 booking_id,
                 user_id,
-                user_email,
-                user_name,
-                user_phone,
                 pickup_address,
                 dropoff_address,
                 vehicle_type,
@@ -317,9 +314,6 @@ app.post("/api/bookings", async (req, res) => {
             ) VALUES (
                 ${bookingData.booking_id},
                 ${bookingData.user_id},
-                ${bookingData.user_email},
-                ${bookingData.user_name},
-                ${bookingData.user_phone},
                 ${bookingData.pickup_address},
                 ${bookingData.dropoff_address},
                 ${bookingData.vehicle_type},
