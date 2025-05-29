@@ -1090,6 +1090,502 @@ app.get("/api/users/search", async (req, res) => {
     }
 });
 
+// API per ottenere tutte le promozioni
+app.get("/api/promotions", async (req, res) => {
+    console.log("🎯 Richiesta lista promozioni");
+    
+    try {
+        const promotions = await sql`
+            SELECT 
+                id,
+                codice,
+                descrizione,
+                sconto_percentuale,
+                sconto_fisso,
+                attiva,
+                data_inizio,
+                data_scadenza,
+                utilizzi_massimi,
+                utilizzi_correnti,
+                created_at,
+                updated_at
+            FROM promos 
+            ORDER BY created_at DESC
+        `;
+
+        // Trasforma i dati per compatibilità con il frontend
+        const formattedPromotions = promotions.map(promo => ({
+            id: promo.id,
+            name: promo.descrizione || `Promo ${promo.codice}`,
+            description: promo.descrizione,
+            code: promo.codice,
+            type: promo.sconto_percentuale ? 'percentage' : 'fixed',
+            value: promo.sconto_percentuale || promo.sconto_fisso,
+            startDate: promo.data_inizio,
+            endDate: promo.data_scadenza,
+            maxUses: promo.utilizzi_massimi,
+            usedCount: promo.utilizzi_correnti || 0,
+            isActive: promo.attiva,
+            createdAt: promo.created_at,
+            updatedAt: promo.updated_at
+        }));
+
+        console.log(`✅ Trovate ${promotions.length} promozioni`);
+
+        res.json(formattedPromotions);
+
+    } catch (error) {
+        console.error("💥 Errore nel recupero promozioni:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per creare una nuova promozione
+app.post("/api/promotions", async (req, res) => {
+    console.log("🎯 Creazione nuova promozione");
+    
+    try {
+        const {
+            name,
+            description,
+            code,
+            type,
+            value,
+            startDate,
+            endDate,
+            maxUses,
+            maxUsesPerUser,
+            minOrderAmount,
+            isActive
+        } = req.body;
+
+        // Validazione input
+        if (!code || !maxUsesPerUser|| !value || !startDate || !endDate || !minOrderAmount) {
+            return res.status(400).json({
+                success: false,
+                error: "Campi obbligatori mancanti"
+            });
+        }
+
+        // Verifica che il codice non esista già
+        const existingPromo = await sql`
+            SELECT id FROM promos WHERE codice = ${code}
+        `;
+
+        if (existingPromo.length > 0) {
+            return res.status(400).json({
+                success: false,
+                error: "Codice promozione già esistente"
+            });
+        }
+
+        // Inserisci la nuova promozione
+        const newPromotion = await sql`
+            INSERT INTO promos (
+                codice,
+                descrizione,
+                sconto_percentuale,
+                sconto_fisso,
+                attiva,
+                data_inizio,
+                data_scadenza,
+                utilizzi_massimi,
+                utilizzi_correnti,
+                created_at,
+                updated_at
+            ) VALUES (
+                ${code},
+                ${description || name},
+                ${value},
+                ${null},
+                ${isActive || false},
+                ${startDate},
+                ${endDate},
+                ${maxUses || null},
+                0,
+                NOW(),
+                NOW()
+            )
+            RETURNING *
+        `;
+
+        console.log(`✅ Promozione creata con ID: ${newPromotion[0].id}`);
+
+        res.status(201).json({
+            success: true,
+            data: newPromotion[0],
+            message: "Promozione creata con successo"
+        });
+
+    } catch (error) {
+        console.error("💥 Errore nella creazione promozione:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per aggiornare una promozione esistente
+app.put("/api/promotions/:id", async (req, res) => {
+    console.log(`🎯 Aggiornamento promozione ID: ${req.params.id}`);
+    
+    try {
+        const promoId = parseInt(req.params.id);
+        const {
+            name,
+            description,
+            code,
+            type,
+            value,
+            startDate,
+            endDate,
+            maxUses,
+            maxUsesPerUser,
+            minOrderAmount,
+            isActive
+        } = req.body;
+
+        // Verifica che la promozione esista
+        const existingPromo = await sql`
+            SELECT id FROM promos WHERE id = ${promoId}
+        `;
+
+        if (existingPromo.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "Promozione non trovata"
+            });
+        }
+
+        // Verifica che il codice non sia già utilizzato da un'altra promozione
+        if (code) {
+            const codeCheck = await sql`
+                SELECT id FROM promos WHERE codice = ${code} AND id != ${promoId}
+            `;
+
+            if (codeCheck.length > 0) {
+                return res.status(400).json({
+                    success: false,
+                    error: "Codice promozione già utilizzato"
+                });
+            }
+        }
+
+        // Aggiorna la promozione
+        const updatedPromotion = await sql`
+            UPDATE promos SET
+                codice = COALESCE(${code}, codice),
+                descrizione = COALESCE(${description || name}, descrizione),
+                sconto_percentuale = ${type === 'percentage' ? value : null},
+                sconto_fisso = ${type === 'fixed' ? value : null},
+                attiva = COALESCE(${isActive}, attiva),
+                data_inizio = COALESCE(${startDate}, data_inizio),
+                data_scadenza = COALESCE(${endDate}, data_scadenza),
+                utilizzi_massimi = ${maxUses || null},
+                updated_at = NOW()
+            WHERE id = ${promoId}
+            RETURNING *
+        `;
+
+        console.log(`✅ Promozione aggiornata: ${promoId}`);
+
+        res.json({
+            success: true,
+            data: updatedPromotion[0],
+            message: "Promozione aggiornata con successo"
+        });
+
+    } catch (error) {
+        console.error("💥 Errore nell'aggiornamento promozione:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per eliminare una promozione
+app.delete("/api/promotions/:id", async (req, res) => {
+    console.log(`🎯 Eliminazione promozione ID: ${req.params.id}`);
+    
+    try {
+        const promoId = parseInt(req.params.id);
+
+        // Verifica che la promozione esista
+        const existingPromo = await sql`
+            SELECT id, utilizzi_correnti FROM promos WHERE id = ${promoId}
+        `;
+
+        if (existingPromo.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "Promozione non trovata"
+            });
+        }
+
+        // Verifica se la promozione è stata utilizzata
+        if (existingPromo[0].utilizzi_correnti > 0) {
+            return res.status(400).json({
+                success: false,
+                error: "Impossibile eliminare una promozione già utilizzata"
+            });
+        }
+
+        // Elimina la promozione
+        await sql`
+            DELETE FROM promos WHERE id = ${promoId}
+        `;
+
+        console.log(`✅ Promozione eliminata: ${promoId}`);
+
+        res.json({
+            success: true,
+            message: "Promozione eliminata con successo"
+        });
+
+    } catch (error) {
+        console.error("💥 Errore nell'eliminazione promozione:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per attivare/disattivare una promozione
+app.patch("/api/promotions/:id/toggle", async (req, res) => {
+    console.log(`🎯 Toggle stato promozione ID: ${req.params.id}`);
+    
+    try {
+        const promoId = parseInt(req.params.id);
+        const { isActive } = req.body;
+
+        // Verifica che la promozione esista
+        const existingPromo = await sql`
+            SELECT id FROM promos WHERE id = ${promoId}
+        `;
+
+        if (existingPromo.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "Promozione non trovata"
+            });
+        }
+
+        // Aggiorna lo stato
+        const updatedPromotion = await sql`
+            UPDATE promos SET
+                attiva = ${isActive},
+                updated_at = NOW()
+            WHERE id = ${promoId}
+            RETURNING *
+        `;
+
+        console.log(`✅ Stato promozione aggiornato: ${promoId} -> ${isActive}`);
+
+        res.json({
+            success: true,
+            data: updatedPromotion[0],
+            message: `Promozione ${isActive ? 'attivata' : 'disattivata'} con successo`
+        });
+
+    } catch (error) {
+        console.error("💥 Errore nel toggle promozione:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per ottenere le statistiche delle promozioni
+app.get("/api/promotions/stats", async (req, res) => {
+    console.log("🎯 Richiesta statistiche promozioni");
+    
+    try {
+        // Conta promozioni attive
+        const activePromosResult = await sql`
+            SELECT COUNT(*) as count 
+            FROM promos 
+            WHERE attiva = true 
+            AND data_inizio <= NOW() 
+            AND data_scadenza >= NOW()
+        `;
+
+        // Somma utilizzi totali
+        const totalUsedResult = await sql`
+            SELECT COALESCE(SUM(utilizzi_correnti), 0) as total 
+            FROM promos
+        `;
+
+        // Calcola risparmi totali (approssimativo)
+        const totalSavingsResult = await sql`
+            SELECT 
+                COALESCE(SUM(
+                    CASE 
+                        WHEN sconto_percentuale IS NOT NULL THEN utilizzi_correnti * 10 -- Stima media
+                        WHEN sconto_fisso IS NOT NULL THEN utilizzi_correnti * sconto_fisso
+                        ELSE 0
+                    END
+                ), 0) as total
+            FROM promos
+        `;
+
+        // Conta promozioni in scadenza (prossimi 7 giorni)
+        const expiringPromosResult = await sql`
+            SELECT COUNT(*) as count 
+            FROM promos 
+            WHERE attiva = true 
+            AND data_scadenza BETWEEN NOW() AND NOW() + INTERVAL '7 days'
+        `;
+
+        const stats = {
+            activeCount: parseInt(activePromosResult[0].count),
+            totalUsed: parseInt(totalUsedResult[0].total),
+            totalSavings: parseFloat(totalSavingsResult[0].total).toFixed(2),
+            expiringCount: parseInt(expiringPromosResult[0].count)
+        };
+
+        console.log("✅ Statistiche calcolate:", stats);
+
+        res.json(stats);
+
+    } catch (error) {
+        console.error("💥 Errore nel calcolo statistiche:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per validare e applicare una promozione (per l'app utente)
+app.post("/api/promotions/validate", async (req, res) => {
+    console.log("🎯 Validazione codice promozione");
+    
+    try {
+        const { code, orderAmount, userId } = req.body;
+
+        if (!code) {
+            return res.status(400).json({
+                success: false,
+                error: "Codice promozione richiesto"
+            });
+        }
+
+        // Trova la promozione
+        const promo = await sql`
+            SELECT * FROM promos 
+            WHERE codice = ${code} 
+            AND attiva = true
+        `;
+
+        if (promo.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: "Codice promozione non valido o scaduto"
+            });
+        }
+
+        const promotion = promo[0];
+        const now = new Date();
+        const startDate = new Date(promotion.data_inizio);
+        const endDate = new Date(promotion.data_scadenza);
+
+        // Verifica date
+        if (now < startDate || now > endDate) {
+            return res.status(400).json({
+                success: false,
+                error: "Promozione non ancora attiva o scaduta"
+            });
+        }
+
+        // Verifica utilizzi massimi
+        if (promotion.utilizzi_massimi && promotion.utilizzi_correnti >= promotion.utilizzi_massimi) {
+            return res.status(400).json({
+                success: false,
+                error: "Promozione esaurita"
+            });
+        }
+
+        // Calcola sconto
+        let discountAmount = 0;
+        if (promotion.sconto_percentuale) {
+            discountAmount = (orderAmount * promotion.sconto_percentuale) / 100;
+        } else if (promotion.sconto_fisso) {
+            discountAmount = promotion.sconto_fisso;
+        }
+
+        console.log(`✅ Promozione valida: ${code}, sconto: €${discountAmount}`);
+
+        res.json({
+            success: true,
+            data: {
+                id: promotion.id,
+                code: promotion.codice,
+                description: promotion.descrizione,
+                discountAmount: discountAmount,
+                type: promotion.sconto_percentuale ? 'percentage' : 'fixed',
+                value: promotion.sconto_percentuale || promotion.sconto_fisso
+            }
+        });
+
+    } catch (error) {
+        console.error("💥 Errore nella validazione promozione:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
+// API per applicare una promozione (incrementa utilizzi)
+app.post("/api/promotions/:id/use", async (req, res) => {
+    console.log(`🎯 Applicazione promozione ID: ${req.params.id}`);
+    
+    try {
+        const promoId = parseInt(req.params.id);
+        const { userId, orderId } = req.body;
+
+        // Incrementa il contatore utilizzi
+        const updatedPromo = await sql`
+            UPDATE promos SET
+                utilizzi_correnti = utilizzi_correnti + 1,
+                updated_at = NOW()
+            WHERE id = ${promoId}
+            AND attiva = true
+            AND (utilizzi_massimi IS NULL OR utilizzi_correnti < utilizzi_massimi)
+            RETURNING *
+        `;
+
+        if (updatedPromo.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: "Impossibile applicare la promozione"
+            });
+        }
+
+        console.log(`✅ Promozione applicata: ${promoId}, utilizzi: ${updatedPromo[0].utilizzi_correnti}`);
+
+        res.json({
+            success: true,
+            data: updatedPromo[0],
+            message: "Promozione applicata con successo"
+        });
+
+    } catch (error) {
+        console.error("💥 Errore nell'applicazione promozione:", error);
+        res.status(500).json({
+            success: false,
+            error: "Errore interno del server"
+        });
+    }
+});
+
 // Avvia il server
 app.listen(port, () => {
     console.log(`Server avviato su http://localhost:${port}`); 

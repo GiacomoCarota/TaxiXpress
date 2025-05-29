@@ -266,14 +266,14 @@ function editUser(userId) {
     const user = users.find(u => u.id === userId);
     if (user) {
         editingUserId = userId;
-        document.getElementById('modalTitle').textContent = 'Modifica Utente';
-        document.getElementById('userId').value = user.id;
-        document.getElementById('firstName').value = user.firstName;
-        document.getElementById('lastName').value = user.lastName;
+        // document.getElementById('modalTitle').innerText = 'Modifica Utente';
+        document.getElementById('userId').value = user.idu;
+        document.getElementById('firstName').value = user.firstname;
+        document.getElementById('lastName').value = user.lastname;
         document.getElementById('email').value = user.email;
         document.getElementById('phone').value = user.phone;
         document.getElementById('role').value = user.role;
-        document.getElementById('status').value = user.status;
+        // document.getElementById('status').value = user.status;
         document.getElementById('userModal').classList.remove('hidden');
     }
 }

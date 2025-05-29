@@ -183,7 +183,7 @@ function renderPromotions() {
                 </button>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-                ${getTypeBadge(promo.type)}
+                tipo
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 ${formatPromoValue(promo)}
@@ -312,13 +312,13 @@ function editPromotion(promoId) {
     
     // Populate form
     document.getElementById('promoId').value = promo.id;
-    document.getElementById('name').value = promo.name;
+    // document.getElementById('name').value = promo.name;
     document.getElementById('description').value = promo.description || '';
-    document.getElementById('code').value = promo.code;
-    document.getElementById('type').value = promo.type;
+    // document.getElementById('code').value = promo.code;
+    // document.getElementById('type').value = promo.type;
     document.getElementById('value').value = promo.value;
-    document.getElementById('startDate').value = formatDateTimeLocal(new Date(promo.startDate));
-    document.getElementById('endDate').value = formatDateTimeLocal(new Date(promo.endDate));
+    document.getElementById('startDate').value = formatDateTimeLocal(new Date(promo.startdate));
+    document.getElementById('endDate').value = formatDateTimeLocal(new Date(promo.enddate));
     document.getElementById('maxUses').value = promo.maxUses || '';
     document.getElementById('maxUsesPerUser').value = promo.maxUsesPerUser || '';
     document.getElementById('minOrderAmount').value = promo.minOrderAmount || '';
@@ -372,7 +372,7 @@ async function handleFormSubmit(e) {
     const promoData = {
         name: formData.get('name'),
         description: formData.get('description'),
-        code: formData.get('code'),
+        code: generatePromoCode(),
         type: formData.get('type'),
         value: parseFloat(formData.get('value')),
         startDate: formData.get('startDate'),
