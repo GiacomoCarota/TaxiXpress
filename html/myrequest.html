@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Driver - TaxiXpress</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="icon" type="image/x-icon" href="../icons/favicon-32x32.png">
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-taxi text-2xl text-green-800 mr-2"></i>
+                        <span class="font-bold text-xl text-green-800">TaxiXpress</span>
+                    </div>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="/html/home.html" class="text-gray-600 hover:text-green-600 transition duration-300">Home</a>
+                    <a href="/html/myrequest.html" class="text-green-800 font-medium">Dashboard Driver</a>
+                    <a href="/html/contact.html" class="text-gray-600 hover:text-green-600 transition duration-300">Contact</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-4">
+                    <span id="userGreeting" class="text-green-800 font-medium"></span>
+                    <button onclick="logout()" class="text-gray-600 hover:text-red-600 transition duration-300">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="bg-green-800 text-white py-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">Dashboard Driver</h1>
+            <p class="text-lg opacity-90">Gestisci le tue corse e accetta nuove prenotazioni</p>
+            
+            <!-- Driver Status Toggle -->
+            <div class="mt-6 flex items-center space-x-4">
+                <span class="text-lg">Stato:</span>
+                <button id="statusToggle" onclick="toggleDriverStatus()" class="px-6 py-2 rounded-full font-medium transition duration-300">
+                    <span id="statusText">Offline</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Cards -->
+    <section class="py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Corse Oggi</p>
+                            <p id="todayRides" class="text-2xl font-bold text-green-800">0</p>
+                        </div>
+                        <i class="fas fa-car text-3xl text-green-600"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Guadagno Oggi</p>
+                            <p id="todayEarnings" class="text-2xl font-bold text-green-800">€0</p>
+                        </div>
+                        <i class="fas fa-euro-sign text-3xl text-green-600"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Rating Medio</p>
+                            <p id="averageRating" class="text-2xl font-bold text-green-800">5.0</p>
+                        </div>
+                        <i class="fas fa-star text-3xl text-yellow-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Corse Pendenti</p>
+                            <p id="pendingRides" class="text-2xl font-bold text-orange-600">0</p>
+                        </div>
+                        <i class="fas fa-clock text-3xl text-orange-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pending Requests Section -->
+    <section class="py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Richieste di Corsa</h2>
+            
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="flex justify-center items-center py-12 hidden">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-800"></div>
+            </div>
+
+            <!-- Ride Requests Container -->
+            <div id="rideRequestsContainer" class="space-y-4">
+                <!-- Le richieste verranno inserite qui tramite JavaScript -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="text-center py-12 hidden">
+                <i class="fas fa-car-side text-6xl text-gray-400 mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">Nessuna richiesta di corsa</h3>
+                <p class="text-gray-500">Al momento non ci sono richieste di corsa disponibili.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Active Rides Section -->
+    <section class="py-8">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Corse Attive</h2>
+            
+            <div id="activeRidesContainer" class="space-y-4">
+                <!-- Le corse attive verranno inserite qui tramite JavaScript -->
+            </div>
+
+            <!-- Empty Active Rides State -->
+            <div id="emptyActiveState" class="text-center py-8 hidden">
+                <i class="fas fa-route text-4xl text-gray-400 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-600 mb-2">Nessuna corsa attiva</h3>
+                <p class="text-gray-500">Non hai corse in corso al momento.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 px-4 mt-16">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-taxi text-2xl text-green-600 mr-2"></i>
+                        <span class="font-bold text-xl">TaxiXpress</span>
+                    </div>
+                    <p class="text-gray-400">Your reliable transportation partner, available 24/7 for all your travel needs.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/html/home.html" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="/html/driver-dashboard.html" class="text-gray-400 hover:text-white">Dashboard Driver</a></li>
+                        <li><a href="/html/contact.html" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Airport Transfers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">City Tours</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Corporate Travel</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Wedding Services</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
+                    <p class="text-gray-400 mb-2"><i class="fas fa-phone mr-2"></i>+39 123 456 7890</p>
+                    <p class="text-gray-400 mb-2"><i class="fas fa-envelope mr-2"></i>info@taxixpress.com</p>
+                    <p class="text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i>Via Roma 123, Italia</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 TaxiXpress. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/myrequest.js"></script>
+</body>
+</html>

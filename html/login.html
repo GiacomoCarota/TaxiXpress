@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TaxiXpress</title>
+    <link rel="apple-touch-icon"  href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png"" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/x-icon"  href="/icons/favicon.ico">
+    <link rel="icon" type="image/png" href="/icons/favicon-16x16.png">
+    <link rel="manifest" href="/icons/site.webmanifest">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-taxi text-2xl text-green-800 mr-2"></i>
+                        <span class="font-bold text-xl text-green-800">TaxiXpress</span>
+                    </div>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="/html/home.html" class="text-gray-600 hover:text-green-600 transition duration-300">Home</a>
+                    <a href="/html/book.html" class="text-gray-600 hover:text-green-600 transition duration-300">Book Ride</a>
+                    <a href="/html/pricing.html" class="text-gray-600 hover:text-green-600 transition duration-300">Pricing</a>
+                    <a href="/html/contact.html" class="text-gray-600 hover:text-green-600 transition duration-300">Contact</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="/html/login.html" class="text-green-800 hover:text-green-700 transition duration-300">Login</a>
+                    <a href="/html/register.html" class="bg-green-800 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section class="py-16 px-4 auth-container text-black">
+        <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+            <div class="md:flex">
+                <div class="p-8 w-full">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800">Login to Your Account</h2>
+                        <a href="/html/home.html" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </div>
+                    <form id="login-form"class="space-y-6">
+                        <div>
+                            <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="login-email" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 input-highlight" placeholder="your@email.com">
+                        </div>
+                        <div>
+                            <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <input type="password" id="login-password" class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 input-highlight" placeholder="••••••••">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                                <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                            </div>
+                            <div class="text-sm">
+                                <a href="#" class="font-medium text-green-600 hover:text-green-500">Forgot password?</a>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="submit" id="submit-login" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">Sign in</button>
+                        </div>
+                    </form>
+                    <div class="mt-6">
+                        <div class="relative">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                            </div>
+                        </div>
+                        <div class="mt-6 grid grid-cols-2 gap-3">
+                            <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <i class="fab fa-google text-red-500 mr-2"></i> Google
+                            </button>
+                            <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                <i class="fab fa-facebook text-green-600 mr-2"></i> Facebook
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600">
+                            Don't have an account? 
+                            <a href="/html/register.html" class="font-medium text-green-600 hover:text-green-500">Register here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-taxi text-2xl text-green-600 mr-2"></i>
+                        <span class="font-bold text-xl">TaxiXpress</span>
+                    </div>
+                    <p class="text-gray-400">Your reliable transportation partner, available 24/7 for all your travel needs.</p>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/html/home.html" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="/html/book.html" class="text-gray-400 hover:text-white">Book Ride</a></li>
+                        <li><a href="/html/pricing.html" class="text-gray-400 hover:text-white">Pricing</a></li>
+                        <li><a href="/html/contact.html" class="text-gray-400 hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Airport Transfers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">City Tours</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Corporate Travel</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Wedding Services</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Newsletter</h3>
+                    <p class="text-gray-400 mb-4">Subscribe to our newsletter for the latest offers and updates.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 bg-gray-700 text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-green-500 w-full">
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-r-lg hover:bg-green-700 transition duration-300">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 TaxiXpress. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+<script src="/js/auth.js"></script>
+</html>
