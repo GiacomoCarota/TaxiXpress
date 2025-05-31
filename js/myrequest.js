@@ -135,6 +135,8 @@ async function loadRideRequests() {
   try {
     const response = await fetch("/api/booking/pending");
     const data = await response.json();
+    console.log("Dati richieste:", data);
+
 
     if (data.success) {
       rideRequests = data.data.map((booking) => ({

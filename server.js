@@ -652,7 +652,12 @@ app.get("/api/booking/pending", async (req, res) => {
             WHERE status = 'pending'
             ORDER BY created_at ASC
         `;
+        const nome = await sql`SELECT nome FROM users`;
+        const cognome = await sql`SELECT cognome FROM users`;
 
+        const user_name = nome + " " + cognome;
+
+        pendingBookings.push(user_name);
         console.log(`✅ Trovate ${pendingBookings.length} prenotazioni pending`);
 
         res.json({
