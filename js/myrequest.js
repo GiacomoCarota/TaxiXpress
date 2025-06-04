@@ -187,7 +187,7 @@ async function loadActiveRides() {
     if (data.success) {
       activeRides = data.data.map((booking) => ({
         id: booking.booking_id,
-        customer: booking.user_name,
+        customer: booking.full_name,
         customerPhone: booking.user_phone,
         pickup: booking.pickup_address,
         destination: booking.dropoff_address,
